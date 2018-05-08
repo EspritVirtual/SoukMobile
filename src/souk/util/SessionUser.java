@@ -36,7 +36,7 @@ public class SessionUser {
     }
         public static  void  setInstance(User u) {
        
-            INSTANCE = new User();
+            INSTANCE = u;
         }
        
     
