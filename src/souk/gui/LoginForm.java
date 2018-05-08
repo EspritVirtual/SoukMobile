@@ -98,7 +98,8 @@ public class LoginForm extends BaseForm {
 
                     User u = ser.getUserConnecte(new String(con.getResponseData()));
                     SessionUser.setInstance(u);
-                    new ListeAnnonces(res).show();
+                    System.out.println(SessionUser.getInstance().getId());
+                    new HomePage(res).show();
                 }
             });
 

@@ -28,16 +28,16 @@ public class SessionUser {
     /**
      * Point d'accès pour l'instance unique du singleton
      */
-    public static  User getInstance() {
+    public static User getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new User();
         }
         return INSTANCE;
     }
-        public static  void  setInstance(User u) {
-       
-            INSTANCE = new User();
-        }
-       
-    
+
+    public static void setInstance(User u) {
+
+        INSTANCE = u;
     }
+
+}
