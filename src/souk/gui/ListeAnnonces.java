@@ -43,92 +43,10 @@ public class ListeAnnonces extends BaseForm {
 
     public ListeAnnonces(Resources res) {
         super("Annonces", BoxLayout.y(), res);
-//        Toolbar tb = new Toolbar(true);
-//        setToolbar(tb);
-//        getTitleArea().setUIID("Container");
-//        setTitle("Newsfeed");
-//        getContentPane().setScrollVisible(false);
-//
-//        super.addSideMenu(res);
-//        tb.addSearchCommand(e -> {
-//        });
-//
-//        Tabs swipe = new Tabs();
-//
-//        Label spacer1 = new Label();
-//        Label spacer2 = new Label();
-//        addTab(swipe, res.getImage("large.jpg"), spacer1, "15 Likes  ", "85 Comments", "Integer ut placerat purued non dignissim neque. ");
-//        addTab(swipe, res.getImage("large2.jpg"), spacer2, "100 Likes  ", "66 Comments", "Dogs are cute: story at 11");
-//
-//        swipe.setUIID("Container");
-//        swipe.getContentPane().setUIID("Container");
-//        swipe.hideTabs();
-//
-//        ButtonGroup bg = new ButtonGroup();
-//        int size = Display.getInstance().convertToPixels(1);
-//        Image unselectedWalkthru = Image.createImage(size, size, 0);
-//        Graphics g = unselectedWalkthru.getGraphics();
-//        g.setColor(0xffffff);
-//        g.setAlpha(100);
-//        g.setAntiAliased(true);
-//        g.fillArc(0, 0, size, size, 0, 360);
-//        Image selectedWalkthru = Image.createImage(size, size, 0);
-//        g = selectedWalkthru.getGraphics();
-//        g.setColor(0xffffff);
-//        g.setAntiAliased(true);
-//        g.fillArc(0, 0, size, size, 0, 360);
-//        RadioButton[] rbs = new RadioButton[swipe.getTabCount()];
-//        FlowLayout flow = new FlowLayout(CENTER);
-//        flow.setValign(BOTTOM);
-//        Container radioContainer = new Container(flow);
-//        for (int iter = 0; iter < rbs.length; iter++) {
-//            rbs[iter] = RadioButton.createToggle(unselectedWalkthru, bg);
-//            rbs[iter].setPressedIcon(selectedWalkthru);
-//            rbs[iter].setUIID("Label");
-//            radioContainer.add(rbs[iter]);
-//        }
-//
-//        rbs[0].setSelected(true);
-//        swipe.addSelectionListener((i, ii) -> {
-//            if (!rbs[ii].isSelected()) {
-//                rbs[ii].setSelected(true);
-//            }
-//        });
-//
-//        Component.setSameSize(radioContainer, spacer1, spacer2);
-//        add(LayeredLayout.encloseIn(swipe, radioContainer));
-//
-//        ButtonGroup barGroup = new ButtonGroup();
-//        RadioButton all = RadioButton.createToggle("All", barGroup);
-//        all.setUIID("SelectBar");
-//        RadioButton featured = RadioButton.createToggle("Featured", barGroup);
-//        featured.setUIID("SelectBar");
-//        RadioButton popular = RadioButton.createToggle("Popular", barGroup);
-//        popular.setUIID("SelectBar");
-//        RadioButton myFavorite = RadioButton.createToggle("My Favorites", barGroup);
-//        myFavorite.setUIID("SelectBar");
-//        Label arrow = new Label(res.getImage("news-tab-down-arrow.png"), "Container");
-//
-//        add(LayeredLayout.encloseIn(
-//                GridLayout.encloseIn(4, all, featured, popular, myFavorite),
-//                FlowLayout.encloseBottom(arrow)
-//        ));
-//
-//        all.setSelected(true);
-//        arrow.setVisible(false);
-//        addShowListener(e -> {
-//            arrow.setVisible(true);
-//            updateArrowPosition(all, arrow);
-//        });
-//        bindButtonSelection(all, arrow);
-//        bindButtonSelection(featured, arrow);
-//        bindButtonSelection(popular, arrow);
-//        bindButtonSelection(myFavorite, arrow);
-//
-//        // special case for rotation
-//        addOrientationListener(e -> {
-//            updateArrowPosition(barGroup.getRadioButton(barGroup.getSelectedIndex()), arrow);
-//        });
+
+
+        super.addSideMenu(res);
+
         ConnectionRequest con = new ConnectionRequest();
         con.setUrl("http://localhost:8000/api/allAnnonces");
         NetworkManager.getInstance().addToQueue(con);
@@ -189,6 +107,7 @@ public class ListeAnnonces extends BaseForm {
                 );
 
         swipe.addTab("", page1);
+        refreshTheme();
     }
 
     private void addButton(Image img, String title, boolean liked, float likeCount, int commentCount) {
