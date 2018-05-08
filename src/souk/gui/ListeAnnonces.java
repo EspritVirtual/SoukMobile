@@ -130,7 +130,7 @@ public class ListeAnnonces extends BaseForm {
 //            updateArrowPosition(barGroup.getRadioButton(barGroup.getSelectedIndex()), arrow);
 //        });
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/souk/web/app_dev.php/api/allAnnonces");
+        con.setUrl("http://localhost:8000/api/allAnnonces");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
 
