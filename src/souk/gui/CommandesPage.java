@@ -54,7 +54,7 @@ public class CommandesPage extends BaseForm {
         super("Annonces", BoxLayout.y(), res);
         int id = SessionUser.getInstance().getId();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost:8000/souk/web/app_dev.php/api/commandes/liste/"+id);
+        con.setUrl("http://localhost:8000/api/commandes/liste/"+id);
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override

@@ -51,7 +51,7 @@ public class ReclamationsPage extends BaseForm{
         int id = SessionUser.getInstance().getId();
         ConnectionRequest con = new ConnectionRequest();
    
-        con.setUrl("http://localhost:8000/app_dev.php/api/reclamations/liste/"+id);
+        con.setUrl("http://localhost:8000/api/reclamations/liste/"+id);
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override

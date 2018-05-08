@@ -48,7 +48,7 @@ public class ListeAnnonces extends BaseForm {
         super.addSideMenu(res);
 
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost:8000/app_dev.php/api/allAnnonces");
+        con.setUrl("http://localhost:8000/api/allAnnonces");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
 
