@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<resource majorVersion="1" minorVersion="7" useXmlUI="false">
+<resource majorVersion="1" minorVersion="9" useXmlUI="false">
     <image name="activation-background.jpg"  />
     <image name="Background-Mauve.jpg"  />
+    <image name="commande.png"  />
     <image name="confirmation-background.jpg"  />
     <image name="decorative-mandala-on-a-watercolor-background_1048-5430.jpg"  />
     <image name="dog.jpg"  />

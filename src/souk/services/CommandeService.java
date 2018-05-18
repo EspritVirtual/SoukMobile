@@ -8,6 +8,9 @@ package souk.services;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.JSONParser;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +46,15 @@ public class CommandeService {
                 String dat = String.valueOf(obj.get("dateCom"));
                
                 System.out.println(dat);
-                Date date = (Date) obj.get("dateCom");
+                DateFormat formatter;
+                Date date=new Date();
+                formatter = new SimpleDateFormat("yy-MMM-dd");
+                try {
+                    date = formatter.parse(dat);
+                } catch (ParseException ex) {
+                }
+                System.out.println(date);
+
                 c.setId((int) id);
                 c.setEtat((int)etat);
                 c.setDateCom(date);
