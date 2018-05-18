@@ -67,8 +67,8 @@ public class BaseForm extends Form {
                 FlowLayout.encloseCenterBottom(
                         new Label(res.getImage("logoo.png"), "PictureWhiteBackgrond"))
         ));
-        getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
-        if(SessionUser.getInstance()!=null){
+
+        if(SessionUser.getInstance().getId()!=0){
             getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
 
             getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
@@ -77,11 +77,11 @@ public class BaseForm extends Form {
 
 
         }
-      /*  else{
+       else{
             
-              getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
+               getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
-        }*/
+        }
        
     }
 
