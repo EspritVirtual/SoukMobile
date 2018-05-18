@@ -33,6 +33,9 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.util.Resources;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import souk.entite.Annonces;
@@ -52,10 +55,10 @@ public class CommandesPage extends BaseForm {
        
         
         super("Commandes", BoxLayout.y(), res);
-        /*int id = SessionUser.getInstance().getId();
-        */
+        int id = SessionUser.getInstance().getId();
+        
         ConnectionRequest con = new ConnectionRequest();
-        int id=8;
+        
         con.setUrl("http://localhost:8000/api/commandes/liste/"+id);
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -74,7 +77,7 @@ public class CommandesPage extends BaseForm {
                          etat = "Confirmé";
                      }
                     addButton(res.getImage("commande.png"), etat,lst.getDateCom());}
-
+                    refreshTheme();
                 }
         });
 
@@ -92,16 +95,19 @@ public class CommandesPage extends BaseForm {
         Container cnt = BorderLayout.west(image);
         cnt.setLeadComponent(image);
         TextArea ta = new TextArea(title);
+        
+        
+        Label ta2 = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
+
         ta.setUIID("NewsTopLine");
         ta.setEditable(false);
 
-        Label likes = new Label(date.toString());
-        likes.setTextPosition(RIGHT);
+        
         
 
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        ta
+                        ta,ta2
                 ));
         add(cnt);
         image.addActionListener(e -> ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
