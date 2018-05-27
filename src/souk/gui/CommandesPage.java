@@ -17,6 +17,7 @@ import static com.codename1.ui.Component.CENTER;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
@@ -76,7 +77,7 @@ public class CommandesPage extends BaseForm {
                      } else{
                          etat = "Confirmé";
                      }
-                    addButton(res.getImage("commande.png"), etat,lst.getDateCom());}
+                    addButton(res.getImage("commande.png"), etat,lst.getDateCom(),lst.getId(),res);}
                     refreshTheme();
                 }
         });
@@ -86,31 +87,48 @@ public class CommandesPage extends BaseForm {
 
    
 
-    private void addButton(Image img, String title, Date date) {
+    private void addButton(Image img, String title, Date date,int id,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
         
         image.setUIID("Label");
         Container cnt = BorderLayout.west(image);
-        cnt.setLeadComponent(image);
+        //cnt.setLeadComponent(image);
         TextArea ta = new TextArea(title);
         
-        
+        System.out.println(date);
         Label ta2 = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
-
+        Button bsupp = new Button("Supprimer");
         ta.setUIID("NewsTopLine");
         ta.setEditable(false);
-
         
         
 
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        ta,ta2
+                        ta,ta2,bsupp
                 ));
         add(cnt);
-        image.addActionListener(e -> ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
+            bsupp.addActionListener((e)->{
+                if(title.equals("En attente")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/commandes/annuler/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new CommandesPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Suppression Commande", "Commande supprimée avec succès.", "OK",null);
+
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Suppression Commande", "Vous ne pouvez pas supprimer une commande confirmé", "OK",null);
+                }
+
+            });
     }
 
    
