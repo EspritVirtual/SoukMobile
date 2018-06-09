@@ -54,7 +54,7 @@ public class HomePage extends BaseForm {
         getContentPane().setScrollVisible(false);
 
         super.addSideMenu(res);
-       
+        
 
         Tabs swipe = new Tabs();
 

@@ -27,6 +27,8 @@ import com.codename1.ui.Label;
 import com.codename1.ui.RadioButton;
 import com.codename1.ui.Tabs;
 import com.codename1.ui.TextArea;
+import com.codename1.ui.TextField;
+import com.codename1.ui.Toolbar;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -37,6 +39,7 @@ import com.codename1.ui.util.Resources;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import souk.entite.Annonces;
@@ -50,7 +53,7 @@ import souk.util.SessionUser;
  * @author nour
  */
 public class CommandesPage extends BaseForm {
-    Form f;
+    Form f,f2;
 
     public CommandesPage(Resources res)  {
        
@@ -60,6 +63,8 @@ public class CommandesPage extends BaseForm {
         
         ConnectionRequest con = new ConnectionRequest();
         
+        Label label = new Label("Mes commandes");
+        add(label);
         con.setUrl("http://localhost:8000/api/commandes/liste/"+id);
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -70,24 +75,26 @@ public class CommandesPage extends BaseForm {
                  for(Commande lst : list)
                  {
                      Date d =  lst.getDateCom();
+                     int qu =  lst.getQuantite();
                      String etat = "";
                      if ( lst.getEtat() == 0 ){
-                         etat = "En attente" ;
+                         etat = "Etat : En attente" ;
                          
                      } else{
-                         etat = "Confirmé";
+                         etat = "Etat : Confirmé";
                      }
-                    addButton(res.getImage("commande.png"), etat,lst.getDateCom(),lst.getId(),res);}
+                    addButton(res.getImage("commande.png"), etat,qu,lst.getDateCom(),lst.getId(),res);
+                 }
                     refreshTheme();
                 }
         });
-
+        
     }
 
 
    
 
-    private void addButton(Image img, String title, Date date,int id,Resources res) {
+    private void addButton(Image img, String etat,int quantite, Date date,int id,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
@@ -95,23 +102,52 @@ public class CommandesPage extends BaseForm {
         image.setUIID("Label");
         Container cnt = BorderLayout.west(image);
         //cnt.setLeadComponent(image);
-        TextArea ta = new TextArea(title);
+        TextArea et = new TextArea(etat);
+        Label tq = new Label(String.valueOf(quantite));
+
+        Label tdate = new Label();
+        System.out.println("date Page1 : "+date);
+        String dateStr = String.valueOf(date);
+        System.out.println("date Page2 : "+date);
+        tdate.setText(dateStr);
+        SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd hh:mm:ss z yyyy");
+        try{
+            Date convertedCurrentDate = sdf.parse(String.valueOf(date));
+            
+            String dat=sdf.format(convertedCurrentDate );
+            System.out.println("date Page3 : "+ dat);
+            
+            SimpleDateFormat format1 = new SimpleDateFormat("EE MMM dd hh:mm:ss z yyyy");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            c.setTime(format1.parse(dat));
+            System.out.println(format.format(c.getTime()));
+            tdate.setText(format.format(c.getTime()));
+        }catch(ParseException ex){
+            
+        }
         
-        System.out.println(date);
-        Label ta2 = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
+        
+        
+        
+        
+        
+        
         Button bsupp = new Button("Supprimer");
-        ta.setUIID("NewsTopLine");
-        ta.setEditable(false);
+        Button bedit = new Button("Modifier");
+
+        et.setUIID("NewsTopLine");
+        et.setEditable(false);
         
         
 
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        ta,ta2,bsupp
+                        et,tdate,tq,bedit,bsupp
                 ));
         add(cnt);
-            bsupp.addActionListener((e)->{
-                if(title.equals("En attente")){
+            bsupp.addActionListener((e1)->{
+                if(etat.equals("Etat : En attente")){
                     ConnectionRequest con = new ConnectionRequest();
                     con.setUrl("http://localhost:8000/api/commandes/annuler/"+id);
                     NetworkManager.getInstance().addToQueue(con);
@@ -129,7 +165,72 @@ public class CommandesPage extends BaseForm {
                 }
 
             });
-    }
+            
+            bedit.addActionListener((e)->{
+                if(etat.equals("Etat : En attente")){
+                    
+                        Label lbl_date = new Label("Date :");                       
+                        Label lbl_quantite = new Label("Quantite :");
+                        TextField tf_date = new TextField();
+                        TextField tf_quantite = new TextField();
+                        Button btn_quitter = new Button("Quitter"); 
+                        Button btn_valider = new Button("Valider");
+                        tf_date.setText(tdate.getText()); 
+                        tf_quantite.setText(tq.getText());
+                        
+                        Dialog dlg = new Dialog("Modification");
+                        dlg.setLayout(BoxLayout.y());
+                        Style dlgStyle = dlg.getDialogStyle();
+                        dlgStyle.setBgTransparency(255);
+                        dlgStyle.setBgColor(0xffffff);
+                            
+                        dlg.add(lbl_date);
+                        dlg.add(tf_date);
+                        dlg.add(lbl_quantite);
+                        dlg.add(tf_quantite);
 
+                        Button ok = new Button("Valider");
+                        ok.getAllStyles().setFgColor(0);
+                        dlg.add(ok);
+                        Button quitter = new Button("Quitter");
+                        quitter.getAllStyles().setFgColor(0);
+                        dlg.add(quitter);
+                        quitter.addActionListener((eq)->{
+                            dlg.setVisible(false);
+                            new CommandesPage(res).show();
+                            refreshTheme();
+                        });
+                        
+                        
+                        ok.addActionListener((eq2)->{
+                            System.out.println("ghere");
+                            ConnectionRequest con = new ConnectionRequest();
+                            String d = tf_date.getText();
+                            String qt = tf_quantite.getText();
+                            con.setUrl("http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);
+                            System.out.println("URL : http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);
+                            NetworkManager.getInstance().addToQueue(con);
+                            con.addResponseListener(new ActionListener<NetworkEvent>() {
+                                @Override
+                                public void actionPerformed(NetworkEvent evt) {
+                                    
+                                    
+                                    Dialog.show("Modification Commande", "Commande modifié avec succès.", "OK",null);
+                                    dlg.setVisible(false);
+
+                                    new CommandesPage(res).show();
+                                    refreshTheme();
+                                }
+                            });
+                        });
+                        dlg.showDialog();
+                    
+                }else{
+                    Dialog.show("Modification Commande", "Vous ne pouvez pas modifier une commande confirmé", "OK",null);
+                }
+
+            });
+    }
+    
    
 }
