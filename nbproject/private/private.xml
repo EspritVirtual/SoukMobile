@@ -4,11 +4,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/home/nour/NetBeansProjects/SoukMobile/src/souk/services/CommandeService.java</file>
             <file>file:/home/nour/NetBeansProjects/SoukMobile/src/souk/gui/CommandesPage.java</file>
             <file>file:/home/nour/NetBeansProjects/SoukMobile/src/souk/gui/BaseForm.java</file>
             <file>file:/home/nour/NetBeansProjects/SoukMobile/src/souk/entite/User.java</file>
             <file>file:/home/nour/NetBeansProjects/SoukMobile/src/souk/gui/LoginForm.java</file>
+=======
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/Annonces.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/gui/LoginForm.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/Reservation.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/Evenements.java</file>
+>>>>>>> 1120e8560d06a526217fb8d6bb68b9c7ef9c4aa6
         </group>
     </open-files>
 </project-private>
