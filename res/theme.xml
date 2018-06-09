@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<resource majorVersion="1" minorVersion="9" useXmlUI="false">
+<resource majorVersion="1" minorVersion="7" useXmlUI="false">
     <image name="activation-background.jpg"  />
     <image name="Background-Mauve.jpg"  />
+    <image name="bridge.jpg"  />
     <image name="commande.png"  />
     <image name="confirmation-background.jpg"  />
+    <image name="contact-a.png"  />
+    <image name="contact-b.png"  />
+    <image name="contact-c.png"  />
     <image name="decorative-mandala-on-a-watercolor-background_1048-5430.jpg"  />
     <image name="dog.jpg"  />
     <image name="facebook-logo.png" type="multi"  />
+    <legacyFont name="Font 1" />
+    <legacyFont name="Font 2" />
+    <legacyFont name="Font 3" />
     <image name="large.jpg"  />
     <image name="large2.jpg"  />
     <image name="login-arrow-outline.png"  />
@@ -27,6 +34,7 @@
     <image name="quran-background-decorations-5a2cfcd7e601f8.5062624315128977519421.jpg"  />
     <image name="signin-background.jpg"  />
     <image name="signup-background.jpg"  />
+    <image name="skate-park.jpg"  />
     <image name="smily.png" type="multi"  />
     <image name="template.jpg"  />
     <theme name="Theme">
@@ -234,11 +242,13 @@
         <val key="SideCommand.transparency" value="0" />
         <val key="SideNavigationPanel.bgColor" value="ffffff" />
         <val key="SideNavigationPanel.transparency" value="255" />
+        <val key="SignIn.bgColor" value="ffffff" />
         <val key="SignIn.bgImage" value="decorative-mandala-on-a-watercolor-background_1048-5430.jpg" />
         <val key="SignIn.bgType" value="33" />
+        <val key="SignIn.fgColor" value="ffffff" />
         <val key="SignIn.margin" value="0,0,0,0" />
         <val key="SignIn.padUnit" value="0,0,2,0" />
-        <val key="SignIn.padding" value="0,3,0,0" />
+        <val key="SignIn.padding" value="0,0,0,0" />
         <val key="SignIn.transparency" value="255" />
         <val key="SkipButton.fgColor" value="a2a1b8" />
         <font key="SkipButton.font" type="ttf" face="0" style="0" size="0" name="native:MainLight" family="native:MainLight" sizeSettings="3" actualSize="3.5" />
@@ -315,10 +325,11 @@
         <val key="TitleCommand.sel#padding" value="2,2,2,2" />
         <val key="TitleCommand.sel#transparency" value="0" />
         <val key="TitleCommand.transparency" value="0" />
-        <gradient key="Toolbar.bgGradient" color1="0" color2="0" posX="0.5" posY="0.5" radius="1.0" />
-        <val key="Toolbar.bgType" value="0" />
+        <val key="Toolbar.bgImage" value="decorative-mandala-on-a-watercolor-background_1048-5430.jpg" />
+        <val key="Toolbar.bgType" value="33" />
         <border key="Toolbar.border" type="empty" />
-        <val key="Toolbar.transparency" value="0" />
+        <val key="Toolbar.fgColor" value="000000" />
+        <val key="Toolbar.padding" value="0,0,0,0" />
         <val key="Welcome.bgImage" value="welcome-background.jpg" />
         <val key="Welcome.bgType" value="33" />
         <val key="Welcome.margin" value="0,0,0,0" />
