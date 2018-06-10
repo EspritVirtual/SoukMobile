@@ -55,7 +55,6 @@ public class HomePage extends BaseForm {
         super("Accueil", BoxLayout.y(), res);
 
         super.addSideMenu(res);
-        getToolbar().setUIID("Container");
 
         getContentPane().setUIID("SignInForm");
         Tabs swipe = new Tabs();
