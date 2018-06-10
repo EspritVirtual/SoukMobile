@@ -30,6 +30,7 @@ import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.util.Resources;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,95 +73,36 @@ public class ReclamationsPage extends BaseForm{
                          etat = "Rejeter";
                      }
                      
-                    addButton(res.getImage("reclamations.png"), etat, false,lst.getDateRec() , 32);}
-
+                    addButton(res.getImage("imgreclamation1.png"), etat ,lst.getDateRec() , res);}
+            refreshTheme();
                 }
         });
 
     }
 
-    private void updateArrowPosition(Button b, Label arrow) {
-        arrow.getUnselectedStyle().setMargin(LEFT, b.getX() + b.getWidth() / 2 - arrow.getWidth() / 2);
-        arrow.getParent().repaint();
-
-    }
-
-    private void addTab(Tabs swipe, Image img, Label spacer, String likesStr, String commentsStr, String text) {
-        int size = Math.min(Display.getInstance().getDisplayWidth(), Display.getInstance().getDisplayHeight());
-        if (img.getHeight() < size) {
-            img = img.scaledHeight(size);
-        }
-        Label likes = new Label(likesStr);
-        Style heartStyle = new Style(likes.getUnselectedStyle());
-        heartStyle.setFgColor(0xff2d55);
-        FontImage heartImage = FontImage.createMaterial(FontImage.MATERIAL_FAVORITE, heartStyle);
-        likes.setIcon(heartImage);
-        likes.setTextPosition(RIGHT);
-
-        Label comments = new Label(commentsStr);
-        FontImage.setMaterialIcon(comments, FontImage.MATERIAL_CHAT);
-        if (img.getHeight() > Display.getInstance().getDisplayHeight() / 2) {
-            img = img.scaledHeight(Display.getInstance().getDisplayHeight() / 2);
-        }
-        ScaleImageLabel image = new ScaleImageLabel(img);
-        image.setUIID("Container");
-        image.setBackgroundType(Style.BACKGROUND_IMAGE_SCALED_FILL);
-        Label overlay = new Label(" ", "ImageOverlay");
-
-        Container page1
-                = LayeredLayout.encloseIn(
-                        image,
-                        overlay,
-                        BorderLayout.south(
-                                BoxLayout.encloseY(
-                                        new SpanLabel(text, "LargeWhiteText"),
-                                        FlowLayout.encloseIn(likes, comments),
-                                        spacer
-                                )
-                        )
-                );
-
-        swipe.addTab("", page1);
-    }
-
-    private void addButton(Image img, String title, boolean liked, Date likeCount, int commentCount) {
+   
+    private void addButton(Image img, String title,Date date,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
+        
         image.setUIID("Label");
         Container cnt = BorderLayout.west(image);
         cnt.setLeadComponent(image);
         TextArea ta = new TextArea(title);
+        Label ta2 = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
+        Button bsupp = new Button("Supprimer");
         ta.setUIID("NewsTopLine");
         ta.setEditable(false);
 
-        Label likes = new Label(likeCount + " Likes  ", "NewsBottomLine");
-        likes.setTextPosition(RIGHT);
-        if (!liked) {
-            FontImage.setMaterialIcon(likes, FontImage.MATERIAL_FAVORITE);
-        } else {
-            Style s = new Style(likes.getUnselectedStyle());
-            s.setFgColor(0xff2d55);
-            FontImage heartImage = FontImage.createMaterial(FontImage.MATERIAL_FAVORITE, s);
-            likes.setIcon(heartImage);
-        }
-        Label comments = new Label(commentCount + " Comments", "NewsBottomLine");
-        FontImage.setMaterialIcon(likes, FontImage.MATERIAL_CHAT);
 
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        ta,
-                        BoxLayout.encloseX(likes, comments)
+                        ta,ta2,bsupp
                 ));
         add(cnt);
         image.addActionListener(e -> ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
     }
 
-    private void bindButtonSelection(Button b, Label arrow) {
-        b.addActionListener(e -> {
-            if (b.isSelected()) {
-                updateArrowPosition(b, arrow);
-            }
-        });
-    }
+   
 }

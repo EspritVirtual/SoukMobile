@@ -4,7 +4,10 @@ package souk.services;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.JSONParser;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import souk.entite.Commande;
@@ -37,13 +40,17 @@ public class ReclamationsServices {
                 float id = Float.parseFloat(obj.get("id").toString());
                 float etat = Float.parseFloat(obj.get("etat").toString());
                 String contenu = obj.get("contenu").toString();
+                String dat = String.valueOf(obj.get("dateRec"));
+                DateFormat formatter;
+                Date date=new Date();
+                formatter = new SimpleDateFormat("yy-MMM-dd");
 
                 
                 
                 rec.setId((int) id);
                 rec.setEtat((int)etat);
                 rec.setContenu(contenu);
-                
+                rec.setDateRec(date);
 
                // e.setEtat(obj.get("state").toString());
               //e.setNom(obj.get("name").toString());
