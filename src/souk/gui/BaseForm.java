@@ -33,7 +33,7 @@ public class BaseForm extends Form {
 
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
-        addSideMenu(res);
+        //addSideMenu(res);
     }
 
     public Component createLineSeparator() {
