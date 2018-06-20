@@ -105,4 +105,9 @@ public class Annonces {
         this.categorie = categorie;
     }
 
+    @Override
+    public String toString() {
+        return "Annonces{" + "id=" + id + ", titre=" + titre + ", description=" + description + ", prix=" + prix + ", disponible=" + disponible + ", dateCreation=" + dateCreation + ", categorie=" + categorie + ", commercial=" + commercial + '}';
+    }
+
 }
