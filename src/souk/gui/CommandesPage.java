@@ -14,6 +14,7 @@ import com.codename1.io.NetworkManager;
 import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
 import com.codename1.ui.ButtonGroup;
+import com.codename1.ui.Component;
 import static com.codename1.ui.Component.CENTER;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
@@ -60,6 +61,11 @@ public class CommandesPage extends BaseForm {
        
         
         super("Commandes", BoxLayout.y(), res);
+        
+        super.addSideMenu(res);
+        Container cntlbl = new Container();
+        cntlbl.getAllStyles().setPadding(Component.TOP, 50);
+        add(cntlbl);
         int id = SessionUser.getInstance().getId();
         
         ConnectionRequest con = new ConnectionRequest();
@@ -133,20 +139,14 @@ public class CommandesPage extends BaseForm {
         
         
         
-        
-        Button bsupp = new Button("Supprimer");
-        Button bedit = new Button("Modifier");
-
-        et.setUIID("NewsTopLine");
-        et.setEditable(false);
-        
-        
-
-        cnt.add(BorderLayout.CENTER,
-                BoxLayout.encloseY(
-                        et,tdate,tq,bedit,bsupp
-                ));
-        add(cnt);
+        String roles = SessionUser.getInstance().getRoles();
+        System.out.println("roles" + roles);
+        String com = "ROLE_COM";
+        String client = "ROLE_CLIENT";
+        if(roles.toLowerCase().contains(client.toLowerCase())){
+            
+            Button bsupp = new Button("Supprimer");
+            Button bedit = new Button("Modifier");
             bsupp.addActionListener((e1)->{
                 if(etat.equals("Etat : En attente")){
                     ConnectionRequest con = new ConnectionRequest();
@@ -197,10 +197,6 @@ public class CommandesPage extends BaseForm {
                         quitter.getAllStyles().setFgColor(0);
                         dlg.add(quitter);
                         quitter.addActionListener((eq)->{
-                            Message m = new Message("Body of message");
-                            //m.getAttachments().put(textAttachmentUri, "text/plain");
-                            //m.getAttachments().put(imageAttachmentUri, "image/png");
-                            Display.getInstance().sendMessage(new String[] {"someone@gmail.com"}, "Subject of message", m);
                             dlg.setVisible(false);
                             new CommandesPage(res).show();
                             refreshTheme();
@@ -235,6 +231,51 @@ public class CommandesPage extends BaseForm {
                 }
 
             });
+            cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tdate,tq,bedit,bsupp
+                ));
+        }else if(roles.toLowerCase().contains(com.toLowerCase())){
+            
+            Button bconfirm = new Button("Confirmer");
+            bconfirm.addActionListener((e1)->{
+                if(etat.equals("Etat : En attente")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/commandes/confirmer/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new CommandesPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Confirmation Commande", "Commande confirmée avec succès.", "OK",null);
+                            Message m = new Message("Votre commande a été validée avec succès");
+                            //m.getAttachments().put(textAttachmentUri, "text/plain");
+                            //m.getAttachments().put(imageAttachmentUri, "image/png");
+                            Display.getInstance().sendMessage(new String[] {"nourelhouda.banbia@gmail.com"}, "Commande", m);
+                            
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Confirmation Commande", "Cette commande est déjà confirmée", "OK",null);
+                }
+
+            });
+            cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tdate,tq,bconfirm
+                ));
+        }
+        
+
+        et.setUIID("NewsTopLine");
+        et.setEditable(false);
+        
+        
+
+        
+        add(cnt);
+            
     }
     
    
