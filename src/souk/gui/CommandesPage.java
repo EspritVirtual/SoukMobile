@@ -11,6 +11,7 @@ import com.codename1.components.ToastBar;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
 import com.codename1.ui.ButtonGroup;
 import static com.codename1.ui.Component.CENTER;
@@ -168,7 +169,7 @@ public class CommandesPage extends BaseForm {
             
             bedit.addActionListener((e)->{
                 if(etat.equals("Etat : En attente")){
-                    
+                        
                         Label lbl_date = new Label("Date :");                       
                         Label lbl_quantite = new Label("Quantite :");
                         TextField tf_date = new TextField();
@@ -196,6 +197,10 @@ public class CommandesPage extends BaseForm {
                         quitter.getAllStyles().setFgColor(0);
                         dlg.add(quitter);
                         quitter.addActionListener((eq)->{
+                            Message m = new Message("Body of message");
+                            //m.getAttachments().put(textAttachmentUri, "text/plain");
+                            //m.getAttachments().put(imageAttachmentUri, "image/png");
+                            Display.getInstance().sendMessage(new String[] {"someone@gmail.com"}, "Subject of message", m);
                             dlg.setVisible(false);
                             new CommandesPage(res).show();
                             refreshTheme();
