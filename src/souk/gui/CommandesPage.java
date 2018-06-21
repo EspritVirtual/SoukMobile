@@ -37,6 +37,7 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -64,7 +65,7 @@ public class CommandesPage extends BaseForm {
         
         super.addSideMenu(res);
         Container cntlbl = new Container();
-        cntlbl.getAllStyles().setPadding(Component.TOP, 50);
+        cntlbl.getAllStyles().setPadding(Component.TOP, 80);
         add(cntlbl);
         int id = SessionUser.getInstance().getId();
         
@@ -184,9 +185,12 @@ public class CommandesPage extends BaseForm {
                         Style dlgStyle = dlg.getDialogStyle();
                         dlgStyle.setBgTransparency(255);
                         dlgStyle.setBgColor(0xffffff);
-                            
+                        Picker datePicker = new Picker();
+                        datePicker.setType(Display.PICKER_TYPE_DATE);
+                        com.codename1.l10n.SimpleDateFormat formatter = new com.codename1.l10n.SimpleDateFormat("yyyy-MM-dd");
+                        datePicker.setFormatter(formatter);    
                         dlg.add(lbl_date);
-                        dlg.add(tf_date);
+                        dlg.add(datePicker);
                         dlg.add(lbl_quantite);
                         dlg.add(tf_quantite);
 
@@ -206,7 +210,7 @@ public class CommandesPage extends BaseForm {
                         ok.addActionListener((eq2)->{
                             System.out.println("ghere");
                             ConnectionRequest con = new ConnectionRequest();
-                            String d = tf_date.getText();
+                            String d = datePicker.getText();
                             String qt = tf_quantite.getText();
                             con.setUrl("http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);
                             System.out.println("URL : http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);

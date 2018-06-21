@@ -4,6 +4,7 @@ import com.codename1.components.ScaleImageLabel;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Button;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
@@ -19,8 +20,8 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
-import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -44,7 +45,8 @@ public class ListeAnnonces extends BaseForm {
         cntlbl.getAllStyles().setPadding(Component.TOP, 100);
         add(cntlbl);
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost:8000/api/annonces/allAnnonces");
+        con.setUrl("http://localhost:8000/api/annonces/all");
+        System.out.println("url : "+"http://localhost:8000/api/annonces/all");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
 
@@ -84,7 +86,7 @@ public class ListeAnnonces extends BaseForm {
             cntIndex.setVisible(false);
             ConnectionRequest connection = new ConnectionRequest();
             System.out.println("cedcbik" + idannonces);
-            connection.setUrl("http://localhost:8000/api/annonces/allAnnonces");
+            connection.setUrl("http://localhost:8000/api/annonces/all");
             NetworkManager.getInstance().addToQueue(connection);
             connection.addResponseListener(new ActionListener<NetworkEvent>() {
 
@@ -167,15 +169,18 @@ public class ListeAnnonces extends BaseForm {
                     Button btn_valider = new Button("Valider");
                     tf_date.setHint("Date"); 
                     tf_quantite.setHint("Quantite");
-
+                    
                     Dialog dlg = new Dialog("Nouvelle commande");
                     dlg.setLayout(BoxLayout.y());
                     Style dlgStyle = dlg.getDialogStyle();
                     dlgStyle.setBgTransparency(255);
                     dlgStyle.setBgColor(0xffffff);
-
+                    Picker datePicker = new Picker();
+                    datePicker.setType(Display.PICKER_TYPE_DATE);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    datePicker.setFormatter(formatter);
                     dlg.add(lbl_date);
-                    dlg.add(tf_date);
+                    dlg.add(datePicker);
                     dlg.add(lbl_quantite);
                     dlg.add(tf_quantite);
 
@@ -194,7 +199,7 @@ public class ListeAnnonces extends BaseForm {
                     int id = SessionUser.getInstance().getId();
                     ok.addActionListener((eq2)->{
                         ConnectionRequest con = new ConnectionRequest();
-                        String d = tf_date.getText();
+                        String d = datePicker.getText();
                         String qt = tf_quantite.getText();
                         con.setUrl("http://localhost:8000/api/commandes/new/"+idannonces+"/"+d+"/"+qt+"/"+id);
                         NetworkManager.getInstance().addToQueue(con);
