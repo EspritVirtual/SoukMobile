@@ -224,7 +224,7 @@ public class ListeAnnonces extends BaseForm {
             add(cmd);
         }
     }
-    
+       
     private void addStringValue(String s, Component v) {
         add(BorderLayout.west(new Label(s, "PaddedLabel")).
                 add(BorderLayout.CENTER, v));
