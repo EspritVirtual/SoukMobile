@@ -11,8 +11,10 @@ import com.codename1.components.ToastBar;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
 import com.codename1.ui.ButtonGroup;
+import com.codename1.ui.Component;
 import static com.codename1.ui.Component.CENTER;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
@@ -35,6 +37,7 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -59,6 +62,11 @@ public class CommandesPage extends BaseForm {
        
         
         super("Commandes", BoxLayout.y(), res);
+        
+        super.addSideMenu(res);
+        Container cntlbl = new Container();
+        cntlbl.getAllStyles().setPadding(Component.TOP, 80);
+        add(cntlbl);
         int id = SessionUser.getInstance().getId();
         
         ConnectionRequest con = new ConnectionRequest();
@@ -132,20 +140,14 @@ public class CommandesPage extends BaseForm {
         
         
         
-        
-        Button bsupp = new Button("Supprimer");
-        Button bedit = new Button("Modifier");
-
-        et.setUIID("NewsTopLine");
-        et.setEditable(false);
-        
-        
-
-        cnt.add(BorderLayout.CENTER,
-                BoxLayout.encloseY(
-                        et,tdate,tq,bedit,bsupp
-                ));
-        add(cnt);
+        String roles = SessionUser.getInstance().getRoles();
+        System.out.println("roles" + roles);
+        String com = "ROLE_COM";
+        String client = "ROLE_CLIENT";
+        if(roles.toLowerCase().contains(client.toLowerCase())){
+            
+            Button bsupp = new Button("Supprimer");
+            Button bedit = new Button("Modifier");
             bsupp.addActionListener((e1)->{
                 if(etat.equals("Etat : En attente")){
                     ConnectionRequest con = new ConnectionRequest();
@@ -168,7 +170,7 @@ public class CommandesPage extends BaseForm {
             
             bedit.addActionListener((e)->{
                 if(etat.equals("Etat : En attente")){
-                    
+                        
                         Label lbl_date = new Label("Date :");                       
                         Label lbl_quantite = new Label("Quantite :");
                         TextField tf_date = new TextField();
@@ -183,9 +185,12 @@ public class CommandesPage extends BaseForm {
                         Style dlgStyle = dlg.getDialogStyle();
                         dlgStyle.setBgTransparency(255);
                         dlgStyle.setBgColor(0xffffff);
-                            
+                        Picker datePicker = new Picker();
+                        datePicker.setType(Display.PICKER_TYPE_DATE);
+                        com.codename1.l10n.SimpleDateFormat formatter = new com.codename1.l10n.SimpleDateFormat("yyyy-MM-dd");
+                        datePicker.setFormatter(formatter);    
                         dlg.add(lbl_date);
-                        dlg.add(tf_date);
+                        dlg.add(datePicker);
                         dlg.add(lbl_quantite);
                         dlg.add(tf_quantite);
 
@@ -205,7 +210,7 @@ public class CommandesPage extends BaseForm {
                         ok.addActionListener((eq2)->{
                             System.out.println("ghere");
                             ConnectionRequest con = new ConnectionRequest();
-                            String d = tf_date.getText();
+                            String d = datePicker.getText();
                             String qt = tf_quantite.getText();
                             con.setUrl("http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);
                             System.out.println("URL : http://localhost:8000/api/commandes/modifier/"+id+"/"+d+"/"+qt);
@@ -230,6 +235,51 @@ public class CommandesPage extends BaseForm {
                 }
 
             });
+            cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tdate,tq,bedit,bsupp
+                ));
+        }else if(roles.toLowerCase().contains(com.toLowerCase())){
+            
+            Button bconfirm = new Button("Confirmer");
+            bconfirm.addActionListener((e1)->{
+                if(etat.equals("Etat : En attente")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/commandes/confirmer/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new CommandesPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Confirmation Commande", "Commande confirmée avec succès.", "OK",null);
+                            Message m = new Message("Votre commande a été validée avec succès");
+                            //m.getAttachments().put(textAttachmentUri, "text/plain");
+                            //m.getAttachments().put(imageAttachmentUri, "image/png");
+                            Display.getInstance().sendMessage(new String[] {"nourelhouda.banbia@gmail.com"}, "Commande", m);
+                            
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Confirmation Commande", "Cette commande est déjà confirmée", "OK",null);
+                }
+
+            });
+            cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tdate,tq,bconfirm
+                ));
+        }
+        
+
+        et.setUIID("NewsTopLine");
+        et.setEditable(false);
+        
+        
+
+        
+        add(cnt);
+            
     }
     
    

@@ -4,27 +4,31 @@ import com.codename1.components.ScaleImageLabel;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Button;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
+import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
-import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.List;
 
 import souk.entite.Annonces;
 import souk.services.AnnoncesServices;
+import souk.util.SessionUser;
 
 /**
  *
@@ -41,7 +45,8 @@ public class ListeAnnonces extends BaseForm {
         cntlbl.getAllStyles().setPadding(Component.TOP, 100);
         add(cntlbl);
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost:8000/api/annonces/allAnnonces");
+        con.setUrl("http://localhost:8000/api/annonces/all");
+        System.out.println("url : "+"http://localhost:8000/api/annonces/all");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
 
@@ -81,7 +86,7 @@ public class ListeAnnonces extends BaseForm {
             cntIndex.setVisible(false);
             ConnectionRequest connection = new ConnectionRequest();
             System.out.println("cedcbik" + idannonces);
-            connection.setUrl("http://localhost:8000/api/annonces/allAnnonces");
+            connection.setUrl("http://localhost:8000/api/annonces/all");
             NetworkManager.getInstance().addToQueue(connection);
             connection.addResponseListener(new ActionListener<NetworkEvent>() {
 
@@ -147,9 +152,79 @@ public class ListeAnnonces extends BaseForm {
 
         lblDescription.setUIID("TextFieldBlack");
         addStringValue(lbladresse, "Soukra");
+        
+        String roles = SessionUser.getInstance().getRoles();
+        System.out.println("roles" + roles);
+        String client = "ROLE_CLIENT";
+        if(roles.toLowerCase().contains(client.toLowerCase())){
+            Button cmd = new Button("Commander");
+            cmd.addActionListener((e)->{
 
+
+                    Label lbl_date = new Label("Date :");                       
+                    Label lbl_quantite = new Label("Quantite :");
+                    TextField tf_date = new TextField();
+                    TextField tf_quantite = new TextField();
+                    Button btn_quitter = new Button("Quitter"); 
+                    Button btn_valider = new Button("Valider");
+                    tf_date.setHint("Date"); 
+                    tf_quantite.setHint("Quantite");
+                    
+                    Dialog dlg = new Dialog("Nouvelle commande");
+                    dlg.setLayout(BoxLayout.y());
+                    Style dlgStyle = dlg.getDialogStyle();
+                    dlgStyle.setBgTransparency(255);
+                    dlgStyle.setBgColor(0xffffff);
+                    Picker datePicker = new Picker();
+                    datePicker.setType(Display.PICKER_TYPE_DATE);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    datePicker.setFormatter(formatter);
+                    dlg.add(lbl_date);
+                    dlg.add(datePicker);
+                    dlg.add(lbl_quantite);
+                    dlg.add(tf_quantite);
+
+                    Button ok = new Button("Valider");
+                    ok.getAllStyles().setFgColor(0);
+                    dlg.add(ok);
+                    Button quitter = new Button("Quitter");
+                    quitter.getAllStyles().setFgColor(0);
+                    dlg.add(quitter);
+                    quitter.addActionListener((eq)->{
+                        dlg.setVisible(false);
+                        new CommandesPage(res).show();
+                        refreshTheme();
+                    });
+
+                    int id = SessionUser.getInstance().getId();
+                    ok.addActionListener((eq2)->{
+                        ConnectionRequest con = new ConnectionRequest();
+                        String d = datePicker.getText();
+                        String qt = tf_quantite.getText();
+                        con.setUrl("http://localhost:8000/api/commandes/new/"+idannonces+"/"+d+"/"+qt+"/"+id);
+                        NetworkManager.getInstance().addToQueue(con);
+                        con.addResponseListener(new ActionListener<NetworkEvent>() {
+                            @Override
+                            public void actionPerformed(NetworkEvent evt) {
+
+
+                                Dialog.show("Nouvelle Commande", "Commande ajoutée avec succès.", "OK",null);
+                                dlg.setVisible(false);
+
+                                new CommandesPage(res).show();
+                                refreshTheme();
+                            }
+                        });
+                    });
+                    dlg.showDialog();
+
+
+
+                });
+            add(cmd);
+        }
     }
-
+    
     private void addStringValue(String s, Component v) {
         add(BorderLayout.west(new Label(s, "PaddedLabel")).
                 add(BorderLayout.CENTER, v));
