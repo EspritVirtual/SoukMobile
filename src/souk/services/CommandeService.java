@@ -8,7 +8,11 @@ package souk.services;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.JSONParser;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +25,11 @@ import souk.entite.Commande;
  */
 public class CommandeService {
     
- 
 
      public ArrayList<Commande> getListCommandes(String json) {
 
         ArrayList<Commande> lstCommandes = new ArrayList<>();
-
+        
         try {
             System.out.println(json);
             JSONParser j = new JSONParser();
@@ -39,15 +42,24 @@ public class CommandeService {
                 Commande c = new Commande();
 
                 float id = Float.parseFloat(obj.get("id").toString());
+                float quantite = Float.parseFloat(obj.get("quantite").toString());
+
                 float etat = Float.parseFloat(obj.get("etat").toString());
-                String dat = String.valueOf(obj.get("dateCom"));
-               
-                System.out.println(dat);
-                Date date = (Date) obj.get("dateCom");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date convertedCurrentDate = sdf.parse(String.valueOf(obj.get("dateCom")));
+
+                    String dat=sdf.format(convertedCurrentDate );
+                    
+                        
+                    c.setDateCom(convertedCurrentDate);
+                } catch (ParseException ex) {
+                }
+                
                 c.setId((int) id);
                 c.setEtat((int)etat);
-                c.setDateCom(date);
-                c.setId((int) id);
+                
+                c.setQuantite((int) quantite);
 
                
                 System.out.println(c);

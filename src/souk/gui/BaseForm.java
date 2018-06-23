@@ -33,7 +33,7 @@ public class BaseForm extends Form {
 
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
-        addSideMenu(res);
+        //addSideMenu(res);
     }
 
     public Component createLineSeparator() {
@@ -67,21 +67,21 @@ public class BaseForm extends Form {
                 FlowLayout.encloseCenterBottom(
                         new Label(res.getImage("logoo.png"), "PictureWhiteBackgrond"))
         ));
-        getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
-        if(SessionUser.getInstance()!=null){
+
+        if(SessionUser.getInstance().getId()!=0){
             getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
 
             getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
-            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());  
-            getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());
+            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());  
+            getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
 
 
         }
-      /*  else{
+       else{
             
-              getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
+               getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
-        }*/
+        }
        
     }
 

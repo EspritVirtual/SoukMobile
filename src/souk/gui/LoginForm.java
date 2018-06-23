@@ -87,6 +87,7 @@ public class LoginForm extends BaseForm {
             UserServices ser = new UserServices();
             ConnectionRequest con = new ConnectionRequest();
             String Url = "http://localhost:8000/api/user/" + getTxtlogin().getText() + "/" + getTxtPassword().getText();
+
             System.out.println("" + Url);
             con.setUrl(Url);
             NetworkManager.getInstance().addToQueue(con);
@@ -98,7 +99,8 @@ public class LoginForm extends BaseForm {
 
                     User u = ser.getUserConnecte(new String(con.getResponseData()));
                     SessionUser.setInstance(u);
-                    new ListeAnnonces(res).show();
+                    System.out.println(SessionUser.getInstance().getId());
+                    new HomePage(res).show();
                 }
             });
 

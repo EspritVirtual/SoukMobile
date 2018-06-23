@@ -20,22 +20,7 @@ import souk.entite.User;
  * @author HAYFA
  */
 public class UserServices {
-    private Object ta;
-  public void ajoutTask(User user) {
-        ConnectionRequest con = new ConnectionRequest();
-        String Url = "http://localhost/souk/web/app_dev.php/api/user/'"+ user.getUsername() + "'/'" + user.getPassword()+"'";
-        con.setUrl(Url);
 
-        System.out.println("succes");
-
-        con.addResponseListener((e) -> {
-            String str = new String(con.getResponseData());
-            System.out.println(str);
-
-            
-        });
-        NetworkManager.getInstance().addToQueueAndWait(con);
-    }
      public User getUserConnecte(String json) {
 
         User user = new User();
@@ -52,11 +37,16 @@ public class UserServices {
                 User e = new User();
 
                 float id = Float.parseFloat(obj.get("id").toString());
-
+                String roles = String.valueOf(obj.get("roles"));
                 user.setId((int) id);
 
                 user.setUsername(obj.get("username").toString());
-              
+                user.setRoles(roles);
+                //récuperer role
+//                 ArrayList<String> role = <String> obj.get("roles");
+//                 System.out.println(role.get("ROLE_USER").toString());
+//                e.setRoles(role.get("ROLE_USER").toString());
+                
                 System.out.println(e);
                 
 
