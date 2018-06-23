@@ -156,7 +156,7 @@ public class ListeAnnonces extends BaseForm {
         String roles = SessionUser.getInstance().getRoles();
         System.out.println("roles" + roles);
         String client = "ROLE_CLIENT";
-        if(roles.toLowerCase().contains(client.toLowerCase())){
+        if(roles.indexOf(client)>=0 ){
             Button cmd = new Button("Commander");
             cmd.addActionListener((e)->{
 
