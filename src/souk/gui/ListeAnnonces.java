@@ -27,7 +27,9 @@ import java.util.Date;
 import java.util.List;
 
 import souk.entite.Annonces;
+import souk.entite.CommentairesAnc;
 import souk.services.AnnoncesServices;
+import souk.services.CommentairesAncServices;
 import souk.util.SessionUser;
 
 /**
@@ -64,6 +66,43 @@ public class ListeAnnonces extends BaseForm {
         });
 
     }
+   public ListeAnnonces(Resources res,int idannonces) {
+        super("Annonces", BoxLayout.y(), res);
+
+        super.addSideMenu(res);
+       ConnectionRequest connection = new ConnectionRequest();
+
+            connection.setUrl("http://localhost:8000/api/annonces/all");
+            NetworkManager.getInstance().addToQueue(connection);
+            connection.addResponseListener(new ActionListener<NetworkEvent>() {
+
+                @Override
+                public void actionPerformed(NetworkEvent evt) {
+                    AnnoncesServices ser = new AnnoncesServices();
+
+                    List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
+
+                    for (Annonces lst : list) {
+                        if (lst.getId() == idannonces) {
+                            detailForm(res.getImage("large.jpg"), lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
+
+                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
+
+                            int id = SessionUser.getInstance().getId();
+                            add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
+                            AfficheCommentairesAnc(res, idannonces);
+
+                        }
+
+                    }
+
+                    refreshTheme();
+                }
+            });
+
+        
+
+    }
 
     private void addButton(Image img, String title, Date date, float prix, Container cntIndex, int idannonces, Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
@@ -73,7 +112,7 @@ public class ListeAnnonces extends BaseForm {
         image.setUIID("Label");
 
         Container cnt = BorderLayout.west(image);
-        cnt.setY(getToolbar().getHeight());
+        ///  cnt.setY(getToolbar().getHeight());
         FontImage iconDetail = FontImage.createMaterial(FontImage.MATERIAL_ARROW_FORWARD, "Détail", 3);
         TextArea txttitle = new TextArea(title);
         txttitle.setEditable(false);
@@ -100,11 +139,11 @@ public class ListeAnnonces extends BaseForm {
                         if (lst.getId() == idannonces) {
                             detailForm(img, lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
 
-                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc(res);
+                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
 
                             int id = SessionUser.getInstance().getId();
                             add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
-                            add(lstCommentaire.AfficheCommentairesAnc(res, idannonces));
+                            AfficheCommentairesAnc(res, idannonces);
 
                         }
 
@@ -166,8 +205,7 @@ public class ListeAnnonces extends BaseForm {
         String client = "ROLE_CLIENT";
         if (roles.toLowerCase().contains(client.toLowerCase())) {
 
-      //  if(roles.indexOf(client)>=0 ){
-
+            //  if(roles.indexOf(client)>=0 ){
             Button cmd = new Button("Commander");
             cmd.addActionListener((e) -> {
 
@@ -232,7 +270,7 @@ public class ListeAnnonces extends BaseForm {
         }
     }
 
-   private void addStringValue(String s, Component v) {
+    private void addStringValue(String s, Component v) {
         add(BorderLayout.west(new Label(s, "PaddedLabel")).
                 add(BorderLayout.CENTER, v));
         add(createLineSeparator(0xeeeeee));
@@ -244,5 +282,76 @@ public class ListeAnnonces extends BaseForm {
         add(createLineSeparator(0xeeeeee));
     }
 
+///////////////////////////////////////////
+    public void AfficheCommentairesAnc(Resources res, int idannonces) {
 
+        ConnectionRequest connectionc = new ConnectionRequest();
+
+        connectionc.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/" + idannonces);
+
+        NetworkManager.getInstance().addToQueue(connectionc);
+        //connectionc.setPost(false);
+        connectionc.addResponseListener(new ActionListener<NetworkEvent>() {
+
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                Container cntIndex = new Container();
+
+                CommentairesAncServices ser = new CommentairesAncServices();
+                List<CommentairesAnc> list = ser.getListCommentairesAnc(new String(connectionc.getResponseData()));
+                // Container cnt = new Container();
+                for (CommentairesAnc lst : list) {
+                    ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
+
+                    lstCommentaire.addBut(res.getImage("contact-b.png"), lst.getContenu(), lst.getDateCmt(), "safa", lst.getId(), res, idannonces, cntIndex);
+
+                }
+                add(cntIndex);
+                refreshTheme();
+            }
+
+        });
+        /// return cntGeneral;
+    }
+
+    private void addBut(Image img, String contenu, Date dateCmt, String username, int idComAnc, Resources res, int idannonces, Container cntIndex) {
+        int height = Display.getInstance().convertToPixels(11.5f);
+        int width = Display.getInstance().convertToPixels(14f);
+        Button image = new Button(img.fill(width, height));
+
+        image.setUIID("Label");
+
+        Container cnt = BorderLayout.west(image);
+///        cnt.setY(getToolbar().getHeight());
+        TextArea txttitle = new TextArea(contenu);
+        txttitle.setEditable(false);
+
+        Label lbldate = new Label(new java.text.SimpleDateFormat("dd-MM-yyyy").format(dateCmt).toString());
+
+        Button btnSupp = new Button(FontImage.createMaterial(FontImage.MATERIAL_DELETE, "del", 3));
+        btnSupp.setUIID("Label");
+        btnSupp.addActionListener((e) -> {
+            System.out.println("id commm" + idComAnc);
+            ConnectionRequest conn = new ConnectionRequest();
+            conn.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/delete/" + idComAnc);
+            NetworkManager.getInstance().addToQueue(conn);
+            conn.addResponseListener(new ActionListener<NetworkEvent>() {
+                @Override
+                public void actionPerformed(NetworkEvent evt) {
+
+                    refreshTheme();
+
+                }
+            });
+
+        });
+
+        cnt.setUIID("Container");
+        cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        txttitle, lbldate, btnSupp
+                ));
+        cntIndex.add(cnt);
+///add(cntIndex);
+    }
 }

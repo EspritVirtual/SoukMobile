@@ -42,39 +42,36 @@ import souk.util.SessionUser;
  *
  * @author Boufares
  */
-public class ListeCommentairesAnc extends BaseForm {
+public class ListeCommentairesAnc extends Form {
 
- public ListeCommentairesAnc(Resources res) {
-        super("", BoxLayout.y(), res);
- }
-    
-    public Container AfficheCommentairesAnc(Resources res, int idannonces) {
-        //   super.addSideMenu(res);
-        Container cntGeneral = new Container(BoxLayout.y());
+    public void AfficheCommentairesAnc(Resources res, int idannonces) {
+
         ConnectionRequest connectionc = new ConnectionRequest();
 
         connectionc.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/" + idannonces);
 
         NetworkManager.getInstance().addToQueue(connectionc);
-        connectionc.setPost(false);
+        //connectionc.setPost(false);
         connectionc.addResponseListener(new ActionListener<NetworkEvent>() {
 
             @Override
             public void actionPerformed(NetworkEvent evt) {
+                Container cntIndex = new Container();
 
                 CommentairesAncServices ser = new CommentairesAncServices();
                 List<CommentairesAnc> list = ser.getListCommentairesAnc(new String(connectionc.getResponseData()));
-               // Container cnt = new Container();
+                // Container cnt = new Container();
                 for (CommentairesAnc lst : list) {
 
-                    cntGeneral.add(addButton(res.getImage("contact-b.png"), lst.getContenu(), lst.getDateCmt(), "safa", lst.getId(), res, idannonces));
+                    addBut(res.getImage("contact-b.png"), lst.getContenu(), lst.getDateCmt(), "safa", lst.getId(), res, idannonces, cntIndex);
 
                 }
-//refreshTheme();
+                add(cntIndex);
+                refreshTheme();
             }
 
         });
-        return cntGeneral;
+        /// return cntGeneral;
     }
 
     public Container ajoutCommentairesAnc(Resources res, int idannonces, int client) {
@@ -94,28 +91,29 @@ public class ListeCommentairesAnc extends BaseForm {
                 @Override
                 public void actionPerformed(NetworkEvent evt) {
                     refreshTheme();
+                    rechargerlapagedetailannonce(res, idannonces);
+
                 }
             });
         });
         return cnt;
     }
 
-    private Container addButton(Image img, String contenu, Date dateCmt, String username, int idComAnc, Resources res, int idannonces) {
+    public void addBut(Image img, String contenu, Date dateCmt, String username, int idComAnc, Resources res, int idannonces, Container cntIndex) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
+
         image.setUIID("Label");
-         Container cnt1 = BorderLayout.west(image);
-        cnt1.setLeadComponent(image);
+
+        Container cnt = BorderLayout.west(image);
+///        cnt.setY(getToolbar().getHeight());
         TextArea txtcontenu = new TextArea(contenu);
-       txtcontenu.setUIID("NewsTopLine");
-        txtcontenu.setEditable(false);
-          Label txtdate = new Label(new com.codename1.l10n.SimpleDateFormat("dd-MM-yyyy").format(dateCmt).toString());
+        txtcontenu.setEditable(true);
 
-     
-        System.out.println("id commm" + idComAnc);
+        Label lbldate = new Label(new SimpleDateFormat("dd-MM-yyyy").format(dateCmt).toString());
 
-        Button btnSupp = new Button( FontImage.createMaterial(FontImage.MATERIAL_DELETE, "del", 3));
+        Button btnSupp = new Button(FontImage.createMaterial(FontImage.MATERIAL_DELETE, "del", 3));
         btnSupp.setUIID("Label");
         btnSupp.addActionListener((e) -> {
             System.out.println("id commm" + idComAnc);
@@ -126,95 +124,50 @@ public class ListeCommentairesAnc extends BaseForm {
                 @Override
                 public void actionPerformed(NetworkEvent evt) {
 
-                    refreshTheme();
+                    Dialog.show("Supression du commentaire", "Suppression avec succès.", "OK", null);
+                    rechargerlapagedetailannonce(res, idannonces);
 
                 }
             });
 
         });
-
         Button btnModif = new Button(FontImage.createMaterial(FontImage.MATERIAL_UPDATE, "modif", 3));
         btnModif.setUIID("Label");
-       btnModif.addActionListener((e2) -> {
-            TextField tf_contenu = new TextField();
-            Button btn_quitter = new Button("Quitter");
-            Button btn_valider = new Button("Valider");
-            tf_contenu.setText(txtcontenu.getText());
-            Dialog dlg = new Dialog("Modification");
-            dlg.setLayout(BoxLayout.y());
-            Style dlgStyle = dlg.getDialogStyle();
-            dlgStyle.setBgTransparency(255);
-            dlgStyle.setBgColor(0xffffff);
-            dlg.add(contenu);
-            Button ok = new Button("Valider");
-            ok.getAllStyles().setFgColor(0);
-            dlg.add(ok);
-            Button quitter = new Button("Quitter");
-            quitter.getAllStyles().setFgColor(0);
-            dlg.add(quitter);
-            quitter.addActionListener((eq) -> {
-                dlg.setVisible(false);
-                ListeAnnonces Fannonce = new ListeAnnonces(res);
-                ConnectionRequest connection = new ConnectionRequest();
+        btnModif.addActionListener((e2) -> {
+            System.out.println("btn" + idComAnc);
+            ConnectionRequest con = new ConnectionRequest();
+            String d = txtcontenu.getText();
+            con.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/update/" + idComAnc + "/" + txtcontenu.getText());
+            NetworkManager.getInstance().addToQueue(con);
+            con.addResponseListener(new ActionListener<NetworkEvent>() {
+                @Override
+                public void actionPerformed(NetworkEvent evt) {
+                    //  new ListeCommentairesAnc().show();
+                    refreshTheme();
 
-                connection.setUrl("http://localhost:8000/api/annonces/all");
-                NetworkManager.getInstance().addToQueue(connection);
-                connection.addResponseListener(new ActionListener<NetworkEvent>() {
-
-                    @Override
-                    public void actionPerformed(NetworkEvent evt) {
-                        AnnoncesServices ser = new AnnoncesServices();
-
-                        List<souk.entite.Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
-
-                        for (souk.entite.Annonces lst : list) {
-                            if (lst.getId() == idannonces) {
-                                Fannonce.detailForm(img, lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
-
-                                int id = SessionUser.getInstance().getId();
-                                add(ajoutCommentairesAnc(res, idannonces, id));
-                                add(AfficheCommentairesAnc(res, idannonces));
-
-                            }
-
-                        }
-
-                        refreshTheme();
-                    }
-                });
-
+                    Dialog.show("Modification du commentaire", "Modification avec succès.", "OK", null);
+                    rechargerlapagedetailannonce(res, idannonces);
+                }
             });
 
-            ok.addActionListener((eq2) -> {
-                System.out.println("ghere");
-                ConnectionRequest con = new ConnectionRequest();
-                String d = txtcontenu.getText();
-                con.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/update/" + idComAnc + contenu);
-                NetworkManager.getInstance().addToQueue(con);
-                con.addResponseListener(new ActionListener<NetworkEvent>() {
-                    @Override
-                    public void actionPerformed(NetworkEvent evt) {
-                      //  new ListeCommentairesAnc().show();
-                        refreshTheme();
-                        Dialog.show("Modification du commentaire", "Modification avec succès.", "OK", null);
+        });
 
-                    }
-                });
-
-            });
-        }
-        );
-
-        //  s.setFgColor(0xf f2d55b
+        cnt.setUIID("Container");
         Container cntbtn = new Container();
         cntbtn.add(BoxLayout.encloseX(btnModif, btnSupp));
-        cnt1.add(BorderLayout.CENTER,
+        cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        txtcontenu,txtdate,cntbtn
-                       
+                        txtcontenu, lbldate, cntbtn
                 ));
-         cnt1.setUIID("Container");
-       return cnt1;
+        cntIndex.add(cnt);
+
+    }
+
+    private void rechargerlapagedetailannonce(Resources res, int idannonces) {
+        ListeAnnonces Fannonce = new ListeAnnonces(res,idannonces);
+                  Fannonce.show();
+        
+
     }
 
 }
