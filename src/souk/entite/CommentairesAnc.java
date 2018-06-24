@@ -55,4 +55,9 @@ public class CommentairesAnc {
         this.dateCmt = dateCmt;
     }
 
+    @Override
+    public String toString() {
+        return "CommentairesAnc{" + "id=" + id + ", contenu=" + contenu + ", dateCmt=" + dateCmt + '}';
+    }
+
 }

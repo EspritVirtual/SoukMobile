@@ -98,10 +98,6 @@ public class CommandesPage extends BaseForm {
         });
         
     }
-
-
-   
-
     private void addButton(Image img, String etat,int quantite, Date date,int id,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
