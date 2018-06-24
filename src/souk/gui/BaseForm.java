@@ -31,6 +31,7 @@ public class BaseForm extends Form {
         super(contentPaneLayout);
     }
 
+
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
         //addSideMenu(res);

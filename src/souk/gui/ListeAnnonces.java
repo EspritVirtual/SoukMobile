@@ -46,7 +46,7 @@ public class ListeAnnonces extends BaseForm {
         add(cntlbl);
         ConnectionRequest con = new ConnectionRequest();
         con.setUrl("http://localhost:8000/api/annonces/all");
-        System.out.println("url : "+"http://localhost:8000/api/annonces/all");
+
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
 
@@ -77,7 +77,7 @@ public class ListeAnnonces extends BaseForm {
         FontImage iconDetail = FontImage.createMaterial(FontImage.MATERIAL_ARROW_FORWARD, "Détail", 3);
         TextArea txttitle = new TextArea(title);
         txttitle.setEditable(false);
-        System.out.println(date);
+
         Label lbldate = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
 
         Button btnDet = new Button(iconDetail);
@@ -85,7 +85,7 @@ public class ListeAnnonces extends BaseForm {
         btnDet.addActionListener((e) -> {
             cntIndex.setVisible(false);
             ConnectionRequest connection = new ConnectionRequest();
-            System.out.println("cedcbik" + idannonces);
+
             connection.setUrl("http://localhost:8000/api/annonces/all");
             NetworkManager.getInstance().addToQueue(connection);
             connection.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -98,7 +98,14 @@ public class ListeAnnonces extends BaseForm {
 
                     for (Annonces lst : list) {
                         if (lst.getId() == idannonces) {
-                            detailForm(img, lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal");
+                            detailForm(img, lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
+
+                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc(res);
+
+                            int id = SessionUser.getInstance().getId();
+                            add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
+                            add(lstCommentaire.AfficheCommentairesAnc(res, idannonces));
+
                         }
 
                     }
@@ -117,7 +124,7 @@ public class ListeAnnonces extends BaseForm {
 
     }
 
-    private void detailForm(Image img, String title, String description, float prix, int idannonces, Resources res, String categorie) {
+    public void detailForm(Image img, String title, String description, float prix, int idannonces, Resources res, String categorie, int annonces) {
 
         if (img.getHeight() > Display.getInstance().getDisplayHeight() / 3) {
             img = img.scaledHeight(Display.getInstance().getDisplayHeight() / 3);
@@ -152,79 +159,76 @@ public class ListeAnnonces extends BaseForm {
 
         lblDescription.setUIID("TextFieldBlack");
         addStringValue(lbladresse, "Soukra");
-        
+
         String roles = SessionUser.getInstance().getRoles();
+        int id = SessionUser.getInstance().getId();
         System.out.println("roles" + roles);
         String client = "ROLE_CLIENT";
-        if(roles.toLowerCase().contains(client.toLowerCase())){
+        if (roles.toLowerCase().contains(client.toLowerCase())) {
             Button cmd = new Button("Commander");
-            cmd.addActionListener((e)->{
+            cmd.addActionListener((e) -> {
 
+                Label lbl_date = new Label("Date :");
+                Label lbl_quantite = new Label("Quantite :");
+                TextField tf_date = new TextField();
+                TextField tf_quantite = new TextField();
+                Button btn_quitter = new Button("Quitter");
+                Button btn_valider = new Button("Valider");
+                tf_date.setHint("Date");
+                tf_quantite.setHint("Quantite");
 
-                    Label lbl_date = new Label("Date :");                       
-                    Label lbl_quantite = new Label("Quantite :");
-                    TextField tf_date = new TextField();
-                    TextField tf_quantite = new TextField();
-                    Button btn_quitter = new Button("Quitter"); 
-                    Button btn_valider = new Button("Valider");
-                    tf_date.setHint("Date"); 
-                    tf_quantite.setHint("Quantite");
-                    
-                    Dialog dlg = new Dialog("Nouvelle commande");
-                    dlg.setLayout(BoxLayout.y());
-                    Style dlgStyle = dlg.getDialogStyle();
-                    dlgStyle.setBgTransparency(255);
-                    dlgStyle.setBgColor(0xffffff);
-                    Picker datePicker = new Picker();
-                    datePicker.setType(Display.PICKER_TYPE_DATE);
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    datePicker.setFormatter(formatter);
-                    dlg.add(lbl_date);
-                    dlg.add(datePicker);
-                    dlg.add(lbl_quantite);
-                    dlg.add(tf_quantite);
+                Dialog dlg = new Dialog("Nouvelle commande");
+                dlg.setLayout(BoxLayout.y());
+                Style dlgStyle = dlg.getDialogStyle();
+                dlgStyle.setBgTransparency(255);
+                dlgStyle.setBgColor(0xffffff);
+                Picker datePicker = new Picker();
+                datePicker.setType(Display.PICKER_TYPE_DATE);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                datePicker.setFormatter(formatter);
+                dlg.add(lbl_date);
+                dlg.add(datePicker);
+                dlg.add(lbl_quantite);
+                dlg.add(tf_quantite);
 
-                    Button ok = new Button("Valider");
-                    ok.getAllStyles().setFgColor(0);
-                    dlg.add(ok);
-                    Button quitter = new Button("Quitter");
-                    quitter.getAllStyles().setFgColor(0);
-                    dlg.add(quitter);
-                    quitter.addActionListener((eq)->{
-                        dlg.setVisible(false);
-                        new CommandesPage(res).show();
-                        refreshTheme();
-                    });
-
-                    int id = SessionUser.getInstance().getId();
-                    ok.addActionListener((eq2)->{
-                        ConnectionRequest con = new ConnectionRequest();
-                        String d = datePicker.getText();
-                        String qt = tf_quantite.getText();
-                        con.setUrl("http://localhost:8000/api/commandes/new/"+idannonces+"/"+d+"/"+qt+"/"+id);
-                        NetworkManager.getInstance().addToQueue(con);
-                        con.addResponseListener(new ActionListener<NetworkEvent>() {
-                            @Override
-                            public void actionPerformed(NetworkEvent evt) {
-
-
-                                Dialog.show("Nouvelle Commande", "Commande ajoutée avec succès.", "OK",null);
-                                dlg.setVisible(false);
-
-                                new CommandesPage(res).show();
-                                refreshTheme();
-                            }
-                        });
-                    });
-                    dlg.showDialog();
-
-
-
+                Button ok = new Button("Valider");
+                ok.getAllStyles().setFgColor(0);
+                dlg.add(ok);
+                Button quitter = new Button("Quitter");
+                quitter.getAllStyles().setFgColor(0);
+                dlg.add(quitter);
+                quitter.addActionListener((eq) -> {
+                    dlg.setVisible(false);
+                    new CommandesPage(res).show();
+                    refreshTheme();
                 });
+
+                ok.addActionListener((eq2) -> {
+                    ConnectionRequest con = new ConnectionRequest();
+                    String d = datePicker.getText();
+                    String qt = tf_quantite.getText();
+                    con.setUrl("http://localhost:8000/api/commandes/new/" + idannonces + "/" + d + "/" + qt + "/" + id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+
+                            Dialog.show("Nouvelle Commande", "Commande ajoutée avec succès.", "OK", null);
+                            dlg.setVisible(false);
+
+                            new CommandesPage(res).show();
+                            refreshTheme();
+                        }
+                    });
+                });
+                dlg.showDialog();
+
+            });
             add(cmd);
+
         }
     }
-    
+
     private void addStringValue(String s, Component v) {
         add(BorderLayout.west(new Label(s, "PaddedLabel")).
                 add(BorderLayout.CENTER, v));
@@ -236,5 +240,6 @@ public class ListeAnnonces extends BaseForm {
                 add(BorderLayout.CENTER, v));
         add(createLineSeparator(0xeeeeee));
     }
+
 
 }
