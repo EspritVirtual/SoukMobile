@@ -136,11 +136,13 @@ public class CommandesPage extends BaseForm {
         
         
         
-        String roles = SessionUser.getInstance().getRoles();
-        System.out.println("roles" + roles);
+        String rs = SessionUser.getInstance().getRoles();
+        System.out.println("roles" + rs);
         String com = "ROLE_COM";
         String client = "ROLE_CLIENT";
-        if(roles.toLowerCase().contains(client.toLowerCase())){
+        String roles = String.valueOf(rs);
+        if(roles.indexOf(client)>=0 ){
+        //if(roles.contains(client)){
             
             Button bsupp = new Button("Supprimer");
             Button bedit = new Button("Modifier");
@@ -235,7 +237,7 @@ public class CommandesPage extends BaseForm {
                 BoxLayout.encloseY(
                         et,tdate,tq,bedit,bsupp
                 ));
-        }else if(roles.toLowerCase().contains(com.toLowerCase())){
+        }else if(roles.indexOf(com)>=0 ){
             
             Button bconfirm = new Button("Confirmer");
             bconfirm.addActionListener((e1)->{

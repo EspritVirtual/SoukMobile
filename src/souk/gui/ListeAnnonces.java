@@ -165,6 +165,9 @@ public class ListeAnnonces extends BaseForm {
         System.out.println("roles" + roles);
         String client = "ROLE_CLIENT";
         if (roles.toLowerCase().contains(client.toLowerCase())) {
+
+      //  if(roles.indexOf(client)>=0 ){
+
             Button cmd = new Button("Commander");
             cmd.addActionListener((e) -> {
 
@@ -229,7 +232,7 @@ public class ListeAnnonces extends BaseForm {
         }
     }
 
-    private void addStringValue(String s, Component v) {
+   private void addStringValue(String s, Component v) {
         add(BorderLayout.west(new Label(s, "PaddedLabel")).
                 add(BorderLayout.CENTER, v));
         add(createLineSeparator(0xeeeeee));
