@@ -31,6 +31,7 @@ public class BaseForm extends Form {
         super(contentPaneLayout);
     }
 
+
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
         //addSideMenu(res);
@@ -68,21 +69,29 @@ public class BaseForm extends Form {
                         new Label(res.getImage("logoo.png"), "PictureWhiteBackgrond"))
         ));
 
-        if(SessionUser.getInstance().getId()!=0){
+        if (SessionUser.getInstance().getId() != 0) {
             getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
 
-            getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
-            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());  
+            getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeAnnonces(res).show());
+            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());
             getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
-            getToolbar().addMaterialCommandToSideMenu("Abonnements", FontImage.MATERIAL_ASSIGNMENT, e -> new AbonnementsPage(res).show());
+
+            String rs = SessionUser.getInstance().getRoles();
+
+            String CL = "ROLE_CLIENT";
+            String roles = String.valueOf(rs);
+            if (roles.indexOf(CL)<=0) {
+                System.out.println("roles" + rs);
+                getToolbar().addMaterialCommandToSideMenu("Abonnements", FontImage.MATERIAL_ASSIGNMENT, e -> new AbonnementsPage(res).show());
+
+            }
+
+        } else {
+
+            getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
         }
-       else{
-            
-               getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
-        }
-       
     }
 
 }
