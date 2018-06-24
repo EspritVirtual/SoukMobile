@@ -28,8 +28,9 @@ public class User {
     private String adresse;
     private int tel;
     private String grade;
+    private String titre;
 
-    public User(String username, String username_canonical, String email, String email_canonical, boolean enabled, String salt, String password, Date last_login, String confirmation_token, Date password_requested_at, String roles, String adresse, int tel, String grade) {
+    public User(String username, String username_canonical, String email, String email_canonical, boolean enabled, String salt, String password, Date last_login, String confirmation_token, Date password_requested_at, String roles, String adresse, int tel, String grade, String titre) {
         this.username = username;
         this.username_canonical = username_canonical;
         this.email = email;
@@ -44,6 +45,7 @@ public class User {
         this.adresse = adresse;
         this.tel = tel;
         this.grade = grade;
+        this.titre = titre;
     }
 
     public User() {
@@ -168,12 +170,14 @@ public class User {
     public void setGrade(String grade) {
         this.grade = grade;
     }
-  
-    
 
-   
-    
+    public String getTitre() {
+        return titre;
+    }
 
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
 
    
 

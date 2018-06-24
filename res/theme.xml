@@ -13,13 +13,9 @@
     <image name="decorative-mandala-on-a-watercolor-background_1048-5430.jpg"  />
     <image name="dog.jpg"  />
     <image name="facebook-logo.png" type="multi"  />
-<<<<<<< HEAD
-    <image name="imgreclamation1.png"  />
-=======
     <legacyFont name="Font 1" />
     <legacyFont name="Font 2" />
     <legacyFont name="Font 3" />
->>>>>>> a488cf20de2f769636816f9b7214cd3a3e03eb64
     <image name="large.jpg"  />
     <image name="large2.jpg"  />
     <image name="login-arrow-outline.png"  />
@@ -37,6 +33,7 @@
     <image name="profile-background.jpg"  />
     <image name="profile-pic.jpg" type="multi"  />
     <image name="quran-background-decorations-5a2cfcd7e601f8.5062624315128977519421.jpg"  />
+    <image name="reclamation.jpg"  />
     <image name="signin-background.jpg"  />
     <image name="signup-background.jpg"  />
     <image name="skate-park.jpg"  />
@@ -333,7 +330,7 @@
         <val key="Toolbar.bgImage" value="decorative-mandala-on-a-watercolor-background_1048-5430.jpg" />
         <val key="Toolbar.bgType" value="33" />
         <border key="Toolbar.border" type="empty" />
-        <val key="Toolbar.fgColor" value="000000" />
+        <val key="Toolbar.fgColor" value="0" />
         <val key="Toolbar.padding" value="0,0,0,0" />
         <val key="Welcome.bgImage" value="welcome-background.jpg" />
         <val key="Welcome.bgType" value="33" />
