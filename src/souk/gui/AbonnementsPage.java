@@ -51,12 +51,19 @@ public class AbonnementsPage extends BaseForm {
         int id = SessionUser.getInstance().getId();
 
         ConnectionRequest con = new ConnectionRequest();
+        String rs = SessionUser.getInstance().getRoles();
 
+        String ADMIN = "ROLE_ADMIN";
+        String roles = String.valueOf(rs);
+        if (roles.indexOf(ADMIN) >= 0) {
+            getToolbar().addCommandToOverflowMenu("Ajouter", null, (ev) -> {
+                AjouterForm(res);
+            });
+
+        }
         Label label = new Label("Mes abonnements");
         add(label);
-        getToolbar().addCommandToOverflowMenu("Ajouter", null, (ev) -> {
-            AjouterForm(res);
-        });
+
         con.setUrl("http://localhost:8000/api/abonnements/liste");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -94,8 +101,13 @@ public class AbonnementsPage extends BaseForm {
         Label txtdesc = new Label(desc);
         Label txtprix = new Label(String.valueOf(prix));
         Label txtnb = new Label(String.valueOf(nb));
-        Button delete = new Button("Supprimer");
-        Button edit = new Button("Modifier");
+        Container cntbtn = new Container();
+        Button delete = new Button(FontImage.createMaterial(FontImage.MATERIAL_DELETE, "DELETE", 3));
+        Button edit = new Button(FontImage.createMaterial(FontImage.MATERIAL_UPDATE, "UPDATE", 3));
+        delete.setUIID("Label");
+        edit.setUIID("Label");
+        cntbtn.add(
+                BoxLayout.encloseX(edit, delete));
 
         delete.addActionListener((e) -> {
             ConnectionRequest connection = new ConnectionRequest();
@@ -112,19 +124,31 @@ public class AbonnementsPage extends BaseForm {
             });
 
         });
-       
+
         edit.addActionListener((eq2) -> {
             cnt.removeAll();
             System.out.println("souk.gui.AbonnementsPage.addButton()" + id_ab);
             ModifierForm(res, id_ab, desg, desc, prix, nb);
             refreshTheme();
         });
+        String rs = SessionUser.getInstance().getRoles();
 
         cnt.setUIID("Container");
-        cnt.add(BorderLayout.CENTER,
-                BoxLayout.encloseY(
-                        txtdesg, txtdesc, txtprix, txtnb, delete, edit
-                ));
+        String ADMIN = "ROLE_ADMIN";
+        String roles = String.valueOf(rs);
+        if (roles.indexOf(ADMIN) >= 0) {
+
+            cnt.add(BorderLayout.CENTER,
+                    BoxLayout.encloseY(
+                            txtdesg, txtdesc, txtprix, txtnb, cntbtn
+                    ));
+        } else {
+            cnt.add(BorderLayout.CENTER,
+                    BoxLayout.encloseY(
+                            txtdesg, txtdesc, txtprix, txtnb
+                    ));
+        }
+
         add(cnt);
     }
 
@@ -195,7 +219,7 @@ public class AbonnementsPage extends BaseForm {
         addStringValue("Prix  :", txt_prix);
 
         txt_nbmois.setUIID("TextFieldBlack");
-        addStringValue("Nombre de mois ", txt_nbmois);
+        addStringValue("Nombre de mois :", txt_nbmois);
 
         Button AbAjouter = new Button("Ajouter");
         add(AbAjouter);
