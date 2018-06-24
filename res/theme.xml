@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resource majorVersion="1" minorVersion="7" useXmlUI="false">
+    <image name="abonnement.png"  />
     <image name="activation-background.jpg"  />
     <image name="Background-Mauve.jpg"  />
     <image name="bridge.jpg"  />
