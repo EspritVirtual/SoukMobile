@@ -13,6 +13,7 @@ import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
+import com.codename1.ui.Component;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
 import com.codename1.ui.Container;
@@ -57,10 +58,15 @@ public class ReclamationsPage extends BaseForm{
     public ReclamationsPage(Resources res)  {
        
         super("Reclamation", BoxLayout.y(), res);
+        
+        super.addSideMenu(res);
+        Container cntlbl = new Container();
+        cntlbl.getAllStyles().setPadding(Component.TOP, 80);
+        add(cntlbl);
         int id = SessionUser.getInstance().getId();
         ConnectionRequest con = new ConnectionRequest();
    
-        con.setUrl("http://localhost:8000/api/reclamations/liste/"+id);
+        con.setUrl("http://localhost:8000/api/reclamations/allReclamations");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -68,6 +74,8 @@ public class ReclamationsPage extends BaseForm{
                 ReclamationsServices ser = new ReclamationsServices();
                  List<Reclamations> list = ser.getListReclamations(new String(con.getResponseData()));
                 System.out.println(list);
+                String admin = "ROLE_ADMIN";
+                String client = "ROLE_CLIENT";
                  for(Reclamations lst : list)
                  {
                      
@@ -81,7 +89,14 @@ public class ReclamationsPage extends BaseForm{
                          etat = "Rejeter";
                      }
                      
-                    addButton(res.getImage("imgreclamation1.png"), etat,lst.getContenu(),lst.getDateRec(),lst.getId(),res);}
+        if(SessionUser.getInstance().getRoles().toLowerCase().contains(client.toLowerCase())){
+            if(lst.getClient().getId()==id)
+             addButton(res.getImage("reclamation.jpg"), etat,lst.getContenu(),lst.getCommercial().getTitre(),lst.getDateRec(),lst.getId(),res);
+        }
+                 else
+                    addButton(res.getImage("reclamation.jpg"), etat,lst.getContenu(),lst.getCommercial().getTitre(),lst.getDateRec(),lst.getId(),res);
+                 }
+                         
             refreshTheme();
                 }
         });
@@ -89,7 +104,7 @@ public class ReclamationsPage extends BaseForm{
     }
 
    
-    private void addButton(Image img, String etat,String contenu,Date date,int id,Resources res) {
+    private void addButton(Image img, String etat,String contenu,String idCommer,Date date,int id,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
@@ -98,7 +113,7 @@ public class ReclamationsPage extends BaseForm{
         Container cnt = BorderLayout.west(image);
         
         TextArea et = new TextArea(etat);
-      
+        Label tidCom = new Label(String.valueOf(idCommer));
         Label tcontenu = new Label(String.valueOf(contenu));
         Label tdate = new Label();
         
@@ -106,7 +121,7 @@ public class ReclamationsPage extends BaseForm{
         String dateStr = String.valueOf(date);
         System.out.println("date Page2 : "+date);
         tdate.setText(dateStr);
-        SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd hh:mm:ss z yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd yyyy");
         try{
             Date convertedCurrentDate = sdf.parse(String.valueOf(date));
             
@@ -131,7 +146,7 @@ public class ReclamationsPage extends BaseForm{
                         Label lbl_contenu = new Label("Contenu :");
                         TextField tf_commer = new TextField();
                         TextField tf_contenu = new TextField();
-       
+                        tf_commer.setText(tidCom.getText());
                         tf_contenu.setText(tcontenu.getText());
                         
                         Dialog dlg = new Dialog("Modification");
@@ -165,8 +180,8 @@ public class ReclamationsPage extends BaseForm{
                             ConnectionRequest con = new ConnectionRequest();
                             String commercial = tf_commer.getText();
                             String contenuu = tf_contenu.getText();
-                            con.setUrl("http://localhost:8000/api/reclamations/edit/"+id+"/"+commercial+"/"+contenu);
-                            System.out.println("URL : http://localhost:8000/api/reclamations/edit/"+id+"/"+commercial+"/"+contenuu);
+                            con.setUrl("http://localhost:8000/api/reclamations/edit/"+id+"/"+contenuu);
+                            System.out.println("URL : http://localhost:8000/api/reclamations/edit/"+id+"/"+contenuu);
                             NetworkManager.getInstance().addToQueue(con);
                             con.addResponseListener(new ActionListener<NetworkEvent>() {
                                 @Override
@@ -186,13 +201,13 @@ public class ReclamationsPage extends BaseForm{
  });
            cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        et,tcontenu,tdate,bedit
+                        et,tidCom,tcontenu,tdate,bedit
                 ));
         }else if(roles.toLowerCase().contains(admin.toLowerCase())){
             
-            Button bconfirm = new Button("Confirmer");
+            Button bconfirm = new Button("Accepter");
             bconfirm.addActionListener((e1)->{
-                if(etat.equals("Etat : En attente")){
+                if(etat.equals("Encours")){
                     ConnectionRequest con = new ConnectionRequest();
                     con.setUrl("http://localhost:8000/api/reclamations/accepter/"+id);
                     NetworkManager.getInstance().addToQueue(con);
@@ -201,21 +216,48 @@ public class ReclamationsPage extends BaseForm{
                         public void actionPerformed(NetworkEvent evt) {
                             new ReclamationsPage(res).show();
                             refreshTheme();
-                            Dialog.show("Confirmation Reclamation", "reclamation confirmée avec succès.", "OK",null);
-                            Message m = new Message("Votre reclamation a été validée avec succès");
-                            Display.getInstance().sendMessage(new String[] {"soumaya.zammali@gmail.com"}, "reclamation", m);
+                            Dialog.show("Accepter Reclamation", "reclamation accepté avec succès.", "OK",null);
+                          
                             
                         }
                     }); 
                 }else{
-                    Dialog.show("Confirmation Reclamation", "Cette reclamation est déjà confirmée", "OK",null);
+                    Dialog.show("Accepter Reclamation", "Cette reclamation est déjà accepté", "OK",null);
                 }
 
             });
+            
+            
+            Button brejeter = new Button("Rejeter");
+            brejeter.addActionListener((e1)->{
+                if(etat.equals("Encours")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/reclamations/rejeter/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new ReclamationsPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Rejeter Reclamation", "reclamation rejeter avec succès.", "OK",null);
+                           
+                            
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Rejeter Reclamation", "Cette reclamation est déjà rejeté", "OK",null);
+                }
+
+            });
+            if(etat.equals("Encours")){
             cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        et,tcontenu,tdate,bconfirm
+                        et,tidCom,tcontenu,tdate,bconfirm,brejeter
                 ));
+        }else {cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tidCom,tcontenu,tdate
+                        ));}
         }
         
 

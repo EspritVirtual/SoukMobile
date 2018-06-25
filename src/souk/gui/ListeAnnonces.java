@@ -1,11 +1,15 @@
 package souk.gui;
 
+import com.codename1.ext.filechooser.FileChooser;
+import com.codename1.components.InfiniteProgress;
 import com.codename1.components.ScaleImageLabel;
 import com.codename1.io.ConnectionRequest;
+import com.codename1.io.MultipartRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Button;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
@@ -24,12 +28,17 @@ import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import souk.entite.Annonces;
+import souk.entite.Categories;
 import souk.entite.CommentairesAnc;
 import souk.services.AnnoncesServices;
+import souk.services.CategorieService;
 import souk.services.CommentairesAncServices;
+import java.io.IOException;
 import souk.util.SessionUser;
 
 /**
@@ -37,6 +46,9 @@ import souk.util.SessionUser;
  * @author HAYFA
  */
 public class ListeAnnonces extends BaseForm {
+
+    Container cntIndex = new Container();
+    String fileName;
 
     public ListeAnnonces(Resources res) {
         super("Annonces", BoxLayout.y(), res);
@@ -46,6 +58,15 @@ public class ListeAnnonces extends BaseForm {
 
         cntlbl.getAllStyles().setPadding(Component.TOP, 100);
         add(cntlbl);
+        Button ancAjouter = new Button("Ajouter");
+        cntIndex.add(ancAjouter);
+
+        ancAjouter.addActionListener((e) -> {
+            cntIndex.removeAll();
+            AjouterForm(res);
+            //  new AnnoncesCrud(res).show();
+            refreshTheme();
+        });
         ConnectionRequest con = new ConnectionRequest();
         con.setUrl("http://localhost:8000/api/annonces/all");
 
@@ -55,7 +76,7 @@ public class ListeAnnonces extends BaseForm {
             @Override
             public void actionPerformed(NetworkEvent evt) {
                 AnnoncesServices ser = new AnnoncesServices();
-                Container cntIndex = new Container();
+
                 List<Annonces> list = ser.getListAnnonces(new String(con.getResponseData()));
                 for (Annonces lst : list) {
                     addButton(res.getImage("large.jpg"), lst.getTitre(), lst.getDateCreation(), lst.getPrix(), cntIndex, lst.getId(), res);
@@ -66,41 +87,40 @@ public class ListeAnnonces extends BaseForm {
         });
 
     }
-   public ListeAnnonces(Resources res,int idannonces) {
+
+    public ListeAnnonces(Resources res, int idannonces) {
         super("Annonces", BoxLayout.y(), res);
 
         super.addSideMenu(res);
-       ConnectionRequest connection = new ConnectionRequest();
+        ConnectionRequest connection = new ConnectionRequest();
 
-            connection.setUrl("http://localhost:8000/api/annonces/all");
-            NetworkManager.getInstance().addToQueue(connection);
-            connection.addResponseListener(new ActionListener<NetworkEvent>() {
+        connection.setUrl("http://localhost:8000/api/annonces/all");
+        NetworkManager.getInstance().addToQueue(connection);
+        connection.addResponseListener(new ActionListener<NetworkEvent>() {
 
-                @Override
-                public void actionPerformed(NetworkEvent evt) {
-                    AnnoncesServices ser = new AnnoncesServices();
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                AnnoncesServices ser = new AnnoncesServices();
 
-                    List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
+                List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
 
-                    for (Annonces lst : list) {
-                        if (lst.getId() == idannonces) {
-                            detailForm(res.getImage("large.jpg"), lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
+                for (Annonces lst : list) {
+                    if (lst.getId() == idannonces) {
+                        detailForm(res.getImage("large.jpg"), lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
 
-                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
+                        ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
 
-                            int id = SessionUser.getInstance().getId();
-                            add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
-                            AfficheCommentairesAnc(res, idannonces);
-
-                        }
+                        int id = SessionUser.getInstance().getId();
+                        add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
+                        AfficheCommentairesAnc(res, idannonces);
 
                     }
 
-                    refreshTheme();
                 }
-            });
 
-        
+                refreshTheme();
+            }
+        });
 
     }
 
@@ -314,44 +334,129 @@ public class ListeAnnonces extends BaseForm {
         /// return cntGeneral;
     }
 
-    private void addBut(Image img, String contenu, Date dateCmt, String username, int idComAnc, Resources res, int idannonces, Container cntIndex) {
-        int height = Display.getInstance().convertToPixels(11.5f);
-        int width = Display.getInstance().convertToPixels(14f);
-        Button image = new Button(img.fill(width, height));
+    private void AjouterForm(Resources res) {
 
-        image.setUIID("Label");
+        final ComboBox comboCategorie = getListCategorie();
 
-        Container cnt = BorderLayout.west(image);
-///        cnt.setY(getToolbar().getHeight());
-        TextArea txttitle = new TextArea(contenu);
-        txttitle.setEditable(false);
+        addStringValue("Categorie ", comboCategorie);
 
-        Label lbldate = new Label(new java.text.SimpleDateFormat("dd-MM-yyyy").format(dateCmt).toString());
+        TextField txtprix = new TextField();
 
-        Button btnSupp = new Button(FontImage.createMaterial(FontImage.MATERIAL_DELETE, "del", 3));
-        btnSupp.setUIID("Label");
-        btnSupp.addActionListener((e) -> {
-            System.out.println("id commm" + idComAnc);
-            ConnectionRequest conn = new ConnectionRequest();
-            conn.setUrl("http://localhost:8000/api/commentaire/commentaireAnc/delete/" + idComAnc);
-            NetworkManager.getInstance().addToQueue(conn);
-            conn.addResponseListener(new ActionListener<NetworkEvent>() {
-                @Override
-                public void actionPerformed(NetworkEvent evt) {
+        txtprix.setUIID("TextFieldBlack");
+        addStringValue("Prix ", txtprix);
 
-                    refreshTheme();
+        TextField txtTitre = new TextField();
+
+        txtTitre.setUIID("TextFieldBlack");
+        addStringValue("Titre ", txtTitre);
+
+        TextArea txtDescription = new TextArea();
+
+        txtDescription.setUIID("TextAriaBlack");
+        addStringValue("Description ", txtDescription);
+        Button img = new Button("Image");
+
+        addStringValue("Image ", img);
+
+        ActionListener callback = e -> {
+            if (e != null && e.getSource() != null) {
+                String filePathe = (String) e.getSource();
+                System.out.println(filePathe);
+                 fileName = filePathe.substring(filePathe.lastIndexOf('/') + 1, filePathe.length());
+          
+                System.out.println("fillllllle"+fileName);
+                //  Now do something with this file
+                MultipartRequest cr = new MultipartRequest();
+                String filePath = filePathe;
+                cr.setUrl("http://localhost:8000/uploads/upload.php");
+                cr.setPost(true);
+                String mime = "image/jpeg";
+                try {
+                    cr.addData("file", filePath, mime);
+                    System.out.println(mime);
+                } catch (IOException ex) {
 
                 }
-            });
+                cr.setFilename("file", fileName);//any unique name you want
 
+                InfiniteProgress prog = new InfiniteProgress();
+                Dialog dlg = prog.showInifiniteBlocking();
+                cr.setDisposeOnCompletion(dlg);
+                NetworkManager.getInstance().addToQueueAndWait(cr);
+            }
+        };
+        img.addActionListener(e -> {
+            if (FileChooser.isAvailable()) {
+                FileChooser.showOpenDialog(".pdf,application/pdf,.gif,image/gif,.png,image/png,.jpg,image/jpg,.tif,image/tif,.jpeg", callback);
+            } else {
+                Display.getInstance().openGallery(callback, Display.GALLERY_IMAGE);
+            }
         });
 
-        cnt.setUIID("Container");
-        cnt.add(BorderLayout.CENTER,
-                BoxLayout.encloseY(
-                        txttitle, lbldate, btnSupp
-                ));
-        cntIndex.add(cnt);
-///add(cntIndex);
+        int id = SessionUser.getInstance().getId();
+        Button ancAjouter = new Button("Ajouter");
+        add(ancAjouter);
+        ancAjouter.addActionListener(e -> {
+            if (txtTitre.getText().equals("") || txtprix.getText().equals("") || txtDescription.getText().equals("")|| fileName.equals("")) {
+                Dialog.show("Erreur!", "Veuillez remplir tous les champs: ", "OK", null);
+            } else {
+
+                String idcat = comboCategorie.getSelectedItem().toString().substring(0, comboCategorie.getSelectedItem().toString().indexOf("-"));
+                System.out.println("cate" + idcat);
+                ConnectionRequest conarticle = new ConnectionRequest();
+                conarticle.setUrl("http://localhost:8000/api/annonces/ajouter/" + id
+                        + "/" + txtprix.getText() + "/" + idcat + "/" + txtTitre.getText() + "/" + txtDescription.getText()+"/"+fileName);
+
+                NetworkManager.getInstance().addToQueue(conarticle);
+                conarticle.addResponseListener(new ActionListener<NetworkEvent>() {
+
+                    @Override
+                    public void actionPerformed(NetworkEvent evt) {
+                        String str = new String(conarticle.getResponseData());
+                        System.out.println(str);
+                        Dialog.show("Ajout", "Succès d'ajout.", "OK", null);
+                        
+                           if(str!=""){
+                             
+                             
+                             }
+                    }
+                });
+            }
+        });
     }
+
+    private final ComboBox getListCategorie() {
+        ComboBox comboCategorie = new ComboBox();
+        Map<Double, String> catById = new HashMap<>();
+
+        ConnectionRequest con = new ConnectionRequest();
+
+        con.setUrl("http://localhost:8000/api/categorie/all");
+        NetworkManager.getInstance().addToQueue(con);
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+
+                CategorieService ser = new CategorieService();
+
+                List<Categories> Categories = ser.getListCategorie(new String(con.getResponseData()));
+
+//                for (Categories lst : list) {
+//
+//                    comboCategorie.addItem(lst.getDesignation());
+//                }
+                for (Categories categ : Categories) {
+                    catById.put(Double.parseDouble(String.valueOf(categ.getId())), categ.getDesignation());
+                }
+                for (Map.Entry<Double, String> cleval : catById.entrySet()) {
+                    String cle = cleval.getKey().toString().substring(0, cleval.getKey().toString().indexOf("."));
+                    comboCategorie.addItem(cle + "-" + cleval.getValue());
+                }
+            }
+        });
+
+        return comboCategorie;
+    }
+
 }
