@@ -68,21 +68,20 @@ public class BaseForm extends Form {
                         new Label(res.getImage("logoo.png"), "PictureWhiteBackgrond"))
         ));
 
-        if(SessionUser.getInstance().getId()!=0){
+        if (SessionUser.getInstance().getId() != 0) {
             getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
 
-            getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new  ListeAnnonces(res).show());  
-            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());  
+            getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeAnnonces(res).show());
+            getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());
             getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
+            getToolbar().addMaterialCommandToSideMenu("Evénements", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeEvenements(res).show());
 
+        } else {
+
+            getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
         }
-       else{
-            
-               getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
-        }
-       
     }
 
 }
