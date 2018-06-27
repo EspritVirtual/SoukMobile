@@ -31,6 +31,7 @@ public class BaseForm extends Form {
         super(contentPaneLayout);
     }
 
+
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
         //addSideMenu(res);
@@ -76,8 +77,23 @@ public class BaseForm extends Form {
             getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
             getToolbar().addMaterialCommandToSideMenu("Evénements", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeEvenements(res).show());
 
+<<<<<<< HEAD
         } else {
 
+=======
+            String rs = SessionUser.getInstance().getRoles();
+
+            String CL = "ROLE_CLIENT";
+            String roles = String.valueOf(rs);
+            if (roles.indexOf(CL)<=0) {
+                System.out.println("roles" + rs);
+                getToolbar().addMaterialCommandToSideMenu("Abonnements", FontImage.MATERIAL_ASSIGNMENT, e -> new AbonnementsPage(res).show());
+
+            }
+
+        } else {
+
+>>>>>>> 8aaab745e7f59bf126e611ee84e5021b53f52e0f
             getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
 
         }

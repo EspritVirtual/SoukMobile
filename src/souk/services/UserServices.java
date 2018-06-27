@@ -42,10 +42,7 @@ public class UserServices {
 
                 user.setUsername(obj.get("username").toString());
                 user.setRoles(roles);
-                //récuperer role
-//                 ArrayList<String> role = <String> obj.get("roles");
-//                 System.out.println(role.get("ROLE_USER").toString());
-//                e.setRoles(role.get("ROLE_USER").toString());
+                
                 
                 System.out.println(e);
                 

@@ -71,7 +71,7 @@ public class ListeEvenements extends BaseForm{
             @Override
             public void actionPerformed(NetworkEvent evt) {
                 EvenementsServices ser = new EvenementsServices();
-                System.out.println("a7la Zkima"+con.getUrl());
+                System.out.println(con.getUrl());
                 Container cntIndex = new Container();
                  list = ser.getListeEvenements(new String(con.getResponseData()));
                 for (Evenements lst : list) {
@@ -80,7 +80,7 @@ public class ListeEvenements extends BaseForm{
                          etat = "Etat : Disponible" ;
                          
                      } else{
-                         etat = "Etat : Confirmé";
+                         etat = "Etat : Non Disponible";
                      }
                                   
                     
@@ -115,7 +115,7 @@ public class ListeEvenements extends BaseForm{
         Button btnDet = new Button(iconDetail);
         btnDet.setUIID("Label");
         btnDet.addActionListener((e) -> {
-                                System.out.println("ghazela ma7lek"+list.size());
+                                System.out.println(list.size());
 
             for (Evenements lst : list) {
                 if (lst.getId() == idevenements) {
@@ -132,7 +132,7 @@ public class ListeEvenements extends BaseForm{
              etatDet = "Etat : Disponible" ;
 
          } else{
-             etatDet = "Etat : Confirmé";
+             etatDet = "Etat : Non Disponible";
          }
         Label etDetail = new Label(etatDet);
           Label tqDetail = new Label(String.valueOf(prix));

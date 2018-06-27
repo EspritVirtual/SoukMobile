@@ -11,10 +11,13 @@ import com.codename1.components.ToastBar;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
+import com.codename1.ui.Component;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
@@ -22,6 +25,7 @@ import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.Tabs;
 import com.codename1.ui.TextArea;
+import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -29,12 +33,18 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import souk.entite.Reclamations;
+import souk.entite.User;
 import souk.services.ReclamationsServices;
+import souk.services.UserServices;
 import souk.util.SessionUser;
 
 /**
@@ -48,10 +58,15 @@ public class ReclamationsPage extends BaseForm{
     public ReclamationsPage(Resources res)  {
        
         super("Reclamation", BoxLayout.y(), res);
+        
+        super.addSideMenu(res);
+        Container cntlbl = new Container();
+        cntlbl.getAllStyles().setPadding(Component.TOP, 80);
+        add(cntlbl);
         int id = SessionUser.getInstance().getId();
         ConnectionRequest con = new ConnectionRequest();
    
-        con.setUrl("http://localhost:8000/api/reclamations/liste/"+id);
+        con.setUrl("http://localhost:8000/api/reclamations/allReclamations");
         NetworkManager.getInstance().addToQueue(con);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -59,9 +74,11 @@ public class ReclamationsPage extends BaseForm{
                 ReclamationsServices ser = new ReclamationsServices();
                  List<Reclamations> list = ser.getListReclamations(new String(con.getResponseData()));
                 System.out.println(list);
+                String admin = "ROLE_ADMIN";
+                String client = "ROLE_CLIENT";
                  for(Reclamations lst : list)
                  {
-                     Date d =  lst.getDateRec();
+                     
                      String etat = "";
                      if ( lst.getEtat() == 0 ){
                          etat = "Encours" ;
@@ -72,95 +89,185 @@ public class ReclamationsPage extends BaseForm{
                          etat = "Rejeter";
                      }
                      
-                    addButton(res.getImage("reclamations.png"), etat, false,lst.getDateRec() , 32);}
-
+        if(SessionUser.getInstance().getRoles().toLowerCase().contains(client.toLowerCase())){
+            if(lst.getClient().getId()==id)
+             addButton(res.getImage("reclamation.jpg"), etat,lst.getContenu(),lst.getCommercial().getTitre(),lst.getDateRec(),lst.getId(),res);
+        }
+                 else
+                    addButton(res.getImage("reclamation.jpg"), etat,lst.getContenu(),lst.getCommercial().getTitre(),lst.getDateRec(),lst.getId(),res);
+                 }
+                         
+            refreshTheme();
                 }
         });
 
     }
 
-    private void updateArrowPosition(Button b, Label arrow) {
-        arrow.getUnselectedStyle().setMargin(LEFT, b.getX() + b.getWidth() / 2 - arrow.getWidth() / 2);
-        arrow.getParent().repaint();
-
-    }
-
-    private void addTab(Tabs swipe, Image img, Label spacer, String likesStr, String commentsStr, String text) {
-        int size = Math.min(Display.getInstance().getDisplayWidth(), Display.getInstance().getDisplayHeight());
-        if (img.getHeight() < size) {
-            img = img.scaledHeight(size);
-        }
-        Label likes = new Label(likesStr);
-        Style heartStyle = new Style(likes.getUnselectedStyle());
-        heartStyle.setFgColor(0xff2d55);
-        FontImage heartImage = FontImage.createMaterial(FontImage.MATERIAL_FAVORITE, heartStyle);
-        likes.setIcon(heartImage);
-        likes.setTextPosition(RIGHT);
-
-        Label comments = new Label(commentsStr);
-        FontImage.setMaterialIcon(comments, FontImage.MATERIAL_CHAT);
-        if (img.getHeight() > Display.getInstance().getDisplayHeight() / 2) {
-            img = img.scaledHeight(Display.getInstance().getDisplayHeight() / 2);
-        }
-        ScaleImageLabel image = new ScaleImageLabel(img);
-        image.setUIID("Container");
-        image.setBackgroundType(Style.BACKGROUND_IMAGE_SCALED_FILL);
-        Label overlay = new Label(" ", "ImageOverlay");
-
-        Container page1
-                = LayeredLayout.encloseIn(
-                        image,
-                        overlay,
-                        BorderLayout.south(
-                                BoxLayout.encloseY(
-                                        new SpanLabel(text, "LargeWhiteText"),
-                                        FlowLayout.encloseIn(likes, comments),
-                                        spacer
-                                )
-                        )
-                );
-
-        swipe.addTab("", page1);
-    }
-
-    private void addButton(Image img, String title, boolean liked, Date likeCount, int commentCount) {
+   
+    private void addButton(Image img, String etat,String contenu,String idCommer,Date date,int id,Resources res) {
         int height = Display.getInstance().convertToPixels(11.5f);
         int width = Display.getInstance().convertToPixels(14f);
         Button image = new Button(img.fill(width, height));
+        
         image.setUIID("Label");
         Container cnt = BorderLayout.west(image);
-        cnt.setLeadComponent(image);
-        TextArea ta = new TextArea(title);
-        ta.setUIID("NewsTopLine");
-        ta.setEditable(false);
-
-        Label likes = new Label(likeCount + " Likes  ", "NewsBottomLine");
-        likes.setTextPosition(RIGHT);
-        if (!liked) {
-            FontImage.setMaterialIcon(likes, FontImage.MATERIAL_FAVORITE);
-        } else {
-            Style s = new Style(likes.getUnselectedStyle());
-            s.setFgColor(0xff2d55);
-            FontImage heartImage = FontImage.createMaterial(FontImage.MATERIAL_FAVORITE, s);
-            likes.setIcon(heartImage);
+        
+        TextArea et = new TextArea(etat);
+        Label tidCom = new Label(String.valueOf(idCommer));
+        Label tcontenu = new Label(String.valueOf(contenu));
+        Label tdate = new Label();
+        
+        System.out.println("date Page1 : "+date);
+        String dateStr = String.valueOf(date);
+        System.out.println("date Page2 : "+date);
+        tdate.setText(dateStr);
+        SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd yyyy");
+        try{
+            Date convertedCurrentDate = sdf.parse(String.valueOf(date));
+            
+            String dat=sdf.format(convertedCurrentDate );
+            System.out.println("date Page3 : "+ dat);
+          
+        }catch(ParseException ex){
+            
         }
-        Label comments = new Label(commentCount + " Comments", "NewsBottomLine");
-        FontImage.setMaterialIcon(likes, FontImage.MATERIAL_CHAT);
+        
+        String roles = SessionUser.getInstance().getRoles();
+        System.out.println("roles" + roles);
+        String admin = "ROLE_ADMIN";
+        String client = "ROLE_CLIENT";
+        if(roles.toLowerCase().contains(client.toLowerCase())){
+     
+            Button bedit = new Button("Modifier");
+        
+            bedit.addActionListener((e)->{
+  
+                        Label lbl_commerciale = new Label("Commerciale :");                       
+                        Label lbl_contenu = new Label("Contenu :");
+                        TextField tf_commer = new TextField();
+                        TextField tf_contenu = new TextField();
+                        tf_commer.setText(tidCom.getText());
+                        tf_contenu.setText(tcontenu.getText());
+                        
+                        Dialog dlg = new Dialog("Modification");
+                        dlg.setLayout(BoxLayout.y());
+                        Style dlgStyle = dlg.getDialogStyle();
+                        dlgStyle.setBgTransparency(255);
+                        dlgStyle.setBgColor(0xffffff);
+                        Picker datePicker = new Picker();
+                        datePicker.setType(Display.PICKER_TYPE_DATE);
+                        com.codename1.l10n.SimpleDateFormat formatter = new com.codename1.l10n.SimpleDateFormat("yyyy-MM-dd");
+                        datePicker.setFormatter(formatter);   
+                        dlg.add(lbl_commerciale);
+                        dlg.add(tf_commer);
+                        dlg.add(lbl_contenu);
+                        dlg.add(tf_contenu);
 
-        cnt.add(BorderLayout.CENTER,
+                        Button ok = new Button("Valider");
+                        ok.getAllStyles().setFgColor(0);
+                        dlg.add(ok);
+                        Button quitter = new Button("Quitter");
+                        quitter.getAllStyles().setFgColor(0);
+                        dlg.add(quitter);
+                        quitter.addActionListener((eq)->{
+                            dlg.setVisible(false);
+                            new ReclamationsPage(res).show();
+                            refreshTheme();
+                        });
+                        
+                        
+                        ok.addActionListener((eq2)->{
+                            ConnectionRequest con = new ConnectionRequest();
+                            String commercial = tf_commer.getText();
+                            String contenuu = tf_contenu.getText();
+                            con.setUrl("http://localhost:8000/api/reclamations/edit/"+id+"/"+contenuu);
+                            System.out.println("URL : http://localhost:8000/api/reclamations/edit/"+id+"/"+contenuu);
+                            NetworkManager.getInstance().addToQueue(con);
+                            con.addResponseListener(new ActionListener<NetworkEvent>() {
+                                @Override
+                                public void actionPerformed(NetworkEvent evt) {
+                                    
+                                    
+                                    Dialog.show("Modification Reclamation", "reclamation modifié avec succès.", "OK",null);
+                                    dlg.setVisible(false);
+
+                                    new ReclamationsPage(res).show();
+                                    refreshTheme();
+                                }
+                            });
+                        });
+                        dlg.showDialog();
+                    
+ });
+           cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        ta,
-                        BoxLayout.encloseX(likes, comments)
+                        et,tidCom,tcontenu,tdate,bedit
                 ));
-        add(cnt);
-        image.addActionListener(e -> ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
-    }
+        }else if(roles.toLowerCase().contains(admin.toLowerCase())){
+            
+            Button bconfirm = new Button("Accepter");
+            bconfirm.addActionListener((e1)->{
+                if(etat.equals("Encours")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/reclamations/accepter/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new ReclamationsPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Accepter Reclamation", "reclamation accepté avec succès.", "OK",null);
+                          
+                            
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Accepter Reclamation", "Cette reclamation est déjà accepté", "OK",null);
+                }
 
-    private void bindButtonSelection(Button b, Label arrow) {
-        b.addActionListener(e -> {
-            if (b.isSelected()) {
-                updateArrowPosition(b, arrow);
-            }
-        });
+            });
+            
+            
+            Button brejeter = new Button("Rejeter");
+            brejeter.addActionListener((e1)->{
+                if(etat.equals("Encours")){
+                    ConnectionRequest con = new ConnectionRequest();
+                    con.setUrl("http://localhost:8000/api/reclamations/rejeter/"+id);
+                    NetworkManager.getInstance().addToQueue(con);
+                    con.addResponseListener(new ActionListener<NetworkEvent>() {
+                        @Override
+                        public void actionPerformed(NetworkEvent evt) {
+                            new ReclamationsPage(res).show();
+                            refreshTheme();
+                            Dialog.show("Rejeter Reclamation", "reclamation rejeter avec succès.", "OK",null);
+                           
+                            
+                        }
+                    }); 
+                }else{
+                    Dialog.show("Rejeter Reclamation", "Cette reclamation est déjà rejeté", "OK",null);
+                }
+
+            });
+            if(etat.equals("Encours")){
+            cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tidCom,tcontenu,tdate,bconfirm,brejeter
+                ));
+        }else {cnt.add(BorderLayout.CENTER,
+                BoxLayout.encloseY(
+                        et,tidCom,tcontenu,tdate
+                        ));}
+        }
+        
+
+        et.setUIID("NewsTopLine");
+        et.setEditable(false);
+        
+        
+
+        
+        add(cnt);
+            
     }
 }

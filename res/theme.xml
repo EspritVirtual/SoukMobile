@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resource majorVersion="1" minorVersion="7" useXmlUI="false">
+    <image name="abonnement.png"  />
     <image name="activation-background.jpg"  />
     <image name="Background-Mauve.jpg"  />
     <image name="bridge.jpg"  />
@@ -32,6 +33,7 @@
     <image name="profile-background.jpg"  />
     <image name="profile-pic.jpg" type="multi"  />
     <image name="quran-background-decorations-5a2cfcd7e601f8.5062624315128977519421.jpg"  />
+    <image name="reclamation.jpg"  />
     <image name="signin-background.jpg"  />
     <image name="signup-background.jpg"  />
     <image name="skate-park.jpg"  />
@@ -328,7 +330,7 @@
         <val key="Toolbar.bgImage" value="decorative-mandala-on-a-watercolor-background_1048-5430.jpg" />
         <val key="Toolbar.bgType" value="33" />
         <border key="Toolbar.border" type="empty" />
-        <val key="Toolbar.fgColor" value="000000" />
+        <val key="Toolbar.fgColor" value="0" />
         <val key="Toolbar.padding" value="0,0,0,0" />
         <val key="Welcome.bgImage" value="welcome-background.jpg" />
         <val key="Welcome.bgType" value="33" />

@@ -45,7 +45,7 @@ public class AnnoncesServices {
 
                 String dat = String.valueOf(obj.get("dateCreation"));
 
-                System.out.println(dat);
+              
                 DateFormat formatter;
                 Date date = new Date();
                 formatter = new SimpleDateFormat("yy-MMM-dd");
