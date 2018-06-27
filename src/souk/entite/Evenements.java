@@ -20,15 +20,15 @@ public class Evenements {
     private Date date_deb;
     private Date date_fin;
     private String lieu;
-    private int prix;
-    private int etat;
+    private float prix;
+    private float etat;
 
     public Evenements() {
         
     }
 
  
-    public Evenements(int id, String client, int id_comm, String titre, String description, Date date_deb, Date date_fin, String lieu, int prix, int etat) {
+    public Evenements(int id, String client, int id_comm, String titre, String description, Date date_deb, Date date_fin, String lieu, float prix, float etat) {
         this.id = id;
         this.client = client;
         this.id_comm = id_comm;
@@ -38,7 +38,16 @@ public class Evenements {
         this.date_fin = date_fin;
         this.lieu = lieu;
         this.prix = prix;
-        this.etat = etat;
+        this.etat= etat;
+    }
+
+    public Evenements(int id,String titre, String description, Date date_deb, String lieu, float prix) {
+        this.id = id;
+        this.titre = titre;
+        this.description = description;
+        this.date_deb = date_deb;
+        this.lieu = lieu;
+        this.prix = prix;
     }
     
     
@@ -107,20 +116,25 @@ public class Evenements {
         this.lieu = lieu;
     }
 
-    public int getPrix() {
+    public float getPrix() {
         return prix;
     }
 
-    public void setPrix(int prix) {
+    public void setPrix(float prix) {
         this.prix = prix;
     }
 
-    public int getEtat() {
+    public float getEtat() {
         return etat;
     }
 
-    public void setEtat(int etat) {
+    public void setEtat(float etat) {
         this.etat = etat;
+    }
+
+    @Override
+    public String toString() {
+        return "Evenements{" + "id=" + id + ", client=" + client + ", id_comm=" + id_comm + ", titre=" + titre + ", description=" + description + ", date_deb=" + date_deb + ", date_fin=" + date_fin + ", lieu=" + lieu + ", prix=" + prix + ", etat=" + etat + '}';
     }
     
     

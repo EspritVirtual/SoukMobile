@@ -4,6 +4,20 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
 <<<<<<< HEAD
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/ListeAnnonces.java</file>
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/ListeCommentairesAnc.java</file>
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/CrudAnnonce.java</file>
+=======
+<<<<<<< HEAD
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/User.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/services/EvenementsServices.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/gui/ListeAnnonces.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/gui/CommandesPage.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/services/AnnoncesServices.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/gui/ListeEvenements.java</file>
+            <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/Evenements.java</file>
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
             <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/AjouterImage.java</file>
             <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/ListeAnnonces.java</file>
@@ -49,6 +63,8 @@
 >>>>>>> 5ad8dd6f7045a561ba8407b3e35e7edda8128e0b
 =======
 >>>>>>> 5ad8dd6f7045a561ba8407b3e35e7edda8128e0b
+>>>>>>> 8aaab745e7f59bf126e611ee84e5021b53f52e0f
+>>>>>>> 08ad17f9d026397226dbd83e9a19c3f22b3bc5dd
         </group>
     </open-files>
 </project-private>
