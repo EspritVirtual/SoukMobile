@@ -76,6 +76,7 @@ public class BaseForm extends Form {
             getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
             getToolbar().addMaterialCommandToSideMenu("Evénements", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeEvenements(res).show());
 
+
             String rs = SessionUser.getInstance().getRoles();
 
             String CL = "ROLE_CLIENT";
@@ -85,6 +86,7 @@ public class BaseForm extends Form {
                 getToolbar().addMaterialCommandToSideMenu("Abonnements", FontImage.MATERIAL_ASSIGNMENT, e -> new AbonnementsPage(res).show());
 
             }
+
         } else {
 
             getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());

@@ -77,10 +77,10 @@ public class ListeEvenements extends BaseForm{
                 for (Evenements lst : list) {
                     String etat = "";
                     if ( lst.getEtat() == 0 ){
-                         etat = "Etat : Disponible" ;
-                         
+                         etat = "Etat : Non Disponible" ;
+                         System.err.println("*****************"+ lst.getEtat());
                      } else{
-                         etat = "Etat : Non Disponible";
+                         etat = "Etat :  Disponible";
                      }
                                   
                     
@@ -129,10 +129,10 @@ public class ListeEvenements extends BaseForm{
         Container cntDetail = BorderLayout.west(imageDetail);
         String etatDet = "";
         if ( evenement.getEtat() == 0 ){
-             etatDet = "Etat : Disponible" ;
+             etatDet = "Etat : Non Disponible" ;
 
          } else{
-             etatDet = "Etat : Non Disponible";
+             etatDet = "Etat : Disponible";
          }
         Label etDetail = new Label(etatDet);
           Label tqDetail = new Label(String.valueOf(prix));

@@ -8,6 +8,7 @@ import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import souk.gui.HomePage;
 import souk.gui.LoginForm;
+import souk.gui.RatingWidget;
 import souk.util.SessionUser;
 
 /**
@@ -35,6 +36,7 @@ public class MyApplication {
             return;
         }
      new HomePage(theme).show();
+  
     }
 
     public void stop() {

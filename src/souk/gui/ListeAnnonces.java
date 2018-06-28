@@ -161,7 +161,7 @@ public class ListeAnnonces extends BaseForm {
         Button btnDet = new Button(iconDetail);
         btnDet.setUIID("Label");
         btnDet.addActionListener((e) -> {
-           cntIndex.setVisible(false);
+            cntIndex.setVisible(false);
             ConnectionRequest connection = new ConnectionRequest();
 
             connection.setUrl("http://localhost:8000/api/annonces/all");
@@ -170,7 +170,7 @@ public class ListeAnnonces extends BaseForm {
 
                 @Override
                 public void actionPerformed(NetworkEvent evt) {
-                     
+
                     AnnoncesServices ser = new AnnoncesServices();
 
                     List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
@@ -186,7 +186,7 @@ public class ListeAnnonces extends BaseForm {
                             add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
                             AfficheCommentairesAnc(res, idannonces);
 
-                         //  refreshTheme();
+                            //  refreshTheme();
                         }
                     }
                 }
@@ -218,7 +218,6 @@ public class ListeAnnonces extends BaseForm {
                             modifier.show();
                             refreshTheme();
 
-                           
                         }
                     }
                 }
@@ -274,9 +273,11 @@ public class ListeAnnonces extends BaseForm {
 
         lblDescription.setUIID("TextFieldBlack");
         addStringValue(lbladresse, "Soukra");
-
-        String roles = SessionUser.getInstance().getRoles();
+        RatingWidget rw = new RatingWidget();
         int id = SessionUser.getInstance().getId();
+        addStringValue("", rw.showReviewWidget(idannonces,id));
+        String roles = SessionUser.getInstance().getRoles();
+       
         System.out.println("roles" + roles);
         String client = "ROLE_CLIENT";
         if (roles.toLowerCase().contains(client.toLowerCase())) {
