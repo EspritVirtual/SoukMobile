@@ -63,8 +63,9 @@ public class ListeAnnonces extends BaseForm {
 
         ancAjouter.addActionListener((e) -> {
             cntIndex.removeAll();
-            AjouterForm(res);
-            //  new AnnoncesCrud(res).show();
+            CrudAnnonce ajouter = new CrudAnnonce(res);
+            ajouter.AjouterForm(res);
+            ajouter.show();
             refreshTheme();
         });
         ConnectionRequest con = new ConnectionRequest();
@@ -139,10 +140,64 @@ public class ListeAnnonces extends BaseForm {
 
         Label lbldate = new Label(new SimpleDateFormat("dd-MM-yyyy").format(date).toString());
 
+        Button btnSupp = new Button(FontImage.createMaterial(FontImage.MATERIAL_DELETE, "del", 3));
+        btnSupp.setUIID("Label");
+        btnSupp.addActionListener((e) -> {
+
+            ConnectionRequest conn = new ConnectionRequest();
+            conn.setUrl("http://localhost:8000/api/annonces/supprimer/" + idannonces);
+            NetworkManager.getInstance().addToQueue(conn);
+            conn.addResponseListener(new ActionListener<NetworkEvent>() {
+                @Override
+                public void actionPerformed(NetworkEvent evt) {
+
+                    Dialog.show("Supression du commentaire", "Suppression avec succès.", "OK", null);
+                    new ListeAnnonces(res).show();
+
+                }
+            });
+
+        });
         Button btnDet = new Button(iconDetail);
         btnDet.setUIID("Label");
         btnDet.addActionListener((e) -> {
-            cntIndex.setVisible(false);
+           cntIndex.setVisible(false);
+            ConnectionRequest connection = new ConnectionRequest();
+
+            connection.setUrl("http://localhost:8000/api/annonces/all");
+            NetworkManager.getInstance().addToQueue(connection);
+            connection.addResponseListener(new ActionListener<NetworkEvent>() {
+
+                @Override
+                public void actionPerformed(NetworkEvent evt) {
+                     
+                    AnnoncesServices ser = new AnnoncesServices();
+
+                    List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
+
+                    for (Annonces anc : list) {
+                        if (anc.getId() == idannonces) {
+
+                            detailForm(img, anc.getTitre(), anc.getDescription(), anc.getPrix(), anc.getId(), res, "Artisanal", idannonces);
+
+                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
+
+                            int id = SessionUser.getInstance().getId();
+                            add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
+                            AfficheCommentairesAnc(res, idannonces);
+
+                         //  refreshTheme();
+                        }
+                    }
+                }
+            });
+
+        });
+        Button btnModif = new Button(FontImage.createMaterial(FontImage.MATERIAL_UPDATE, "modif", 3));
+        btnModif.setUIID("Label");
+
+        btnModif.addActionListener((e2) -> {
+            ///    cntIndex.setVisible(false);
             ConnectionRequest connection = new ConnectionRequest();
 
             connection.setUrl("http://localhost:8000/api/annonces/all");
@@ -155,29 +210,30 @@ public class ListeAnnonces extends BaseForm {
 
                     List<Annonces> list = ser.getListAnnonces(new String(connection.getResponseData()));
 
-                    for (Annonces lst : list) {
-                        if (lst.getId() == idannonces) {
-                            detailForm(img, lst.getTitre(), lst.getDescription(), lst.getPrix(), lst.getId(), res, "Artisanal", idannonces);
+                    for (Annonces anc : list) {
+                        if (anc.getId() == idannonces) {
+                            CrudAnnonce modifier = new CrudAnnonce(res);
 
-                            ListeCommentairesAnc lstCommentaire = new ListeCommentairesAnc();
+                            modifier.ModifForm(anc.getTitre(), anc.getDescription(), anc.getPrix(), res, anc.getId());
+                            modifier.show();
+                            refreshTheme();
 
-                            int id = SessionUser.getInstance().getId();
-                            add(lstCommentaire.ajoutCommentairesAnc(res, idannonces, id));
-                            AfficheCommentairesAnc(res, idannonces);
-
+                           
                         }
-
                     }
-
-                    refreshTheme();
                 }
             });
 
         });
+
         cnt.setUIID("Container");
+        Container cntbtn = new Container();
+        cntbtn.add(BoxLayout.encloseX(
+                btnDet, btnModif, btnSupp
+        ));
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
-                        txttitle, lbldate, btnDet
+                        txttitle, lbldate, cntbtn
                 ));
         cntIndex.add(cnt);
 
@@ -332,131 +388,6 @@ public class ListeAnnonces extends BaseForm {
 
         });
         /// return cntGeneral;
-    }
-
-    private void AjouterForm(Resources res) {
-
-        final ComboBox comboCategorie = getListCategorie();
-
-        addStringValue("Categorie ", comboCategorie);
-
-        TextField txtprix = new TextField();
-
-        txtprix.setUIID("TextFieldBlack");
-        addStringValue("Prix ", txtprix);
-
-        TextField txtTitre = new TextField();
-
-        txtTitre.setUIID("TextFieldBlack");
-        addStringValue("Titre ", txtTitre);
-
-        TextArea txtDescription = new TextArea();
-
-        txtDescription.setUIID("TextAriaBlack");
-        addStringValue("Description ", txtDescription);
-        Button img = new Button("Image");
-
-        addStringValue("Image ", img);
-
-        ActionListener callback = e -> {
-            if (e != null && e.getSource() != null) {
-                String filePathe = (String) e.getSource();
-                System.out.println(filePathe);
-                 fileName = filePathe.substring(filePathe.lastIndexOf('/') + 1, filePathe.length());
-          
-                System.out.println("fillllllle"+fileName);
-                //  Now do something with this file
-                MultipartRequest cr = new MultipartRequest();
-                String filePath = filePathe;
-                cr.setUrl("http://localhost:8000/uploads/upload.php");
-                cr.setPost(true);
-                String mime = "image/jpeg";
-                try {
-                    cr.addData("file", filePath, mime);
-                    System.out.println(mime);
-                } catch (IOException ex) {
-
-                }
-                cr.setFilename("file", fileName);//any unique name you want
-
-                InfiniteProgress prog = new InfiniteProgress();
-                Dialog dlg = prog.showInifiniteBlocking();
-                cr.setDisposeOnCompletion(dlg);
-                NetworkManager.getInstance().addToQueueAndWait(cr);
-            }
-        };
-        img.addActionListener(e -> {
-            if (FileChooser.isAvailable()) {
-                FileChooser.showOpenDialog(".pdf,application/pdf,.gif,image/gif,.png,image/png,.jpg,image/jpg,.tif,image/tif,.jpeg", callback);
-            } else {
-                Display.getInstance().openGallery(callback, Display.GALLERY_IMAGE);
-            }
-        });
-
-        int id = SessionUser.getInstance().getId();
-        Button ancAjouter = new Button("Ajouter");
-        add(ancAjouter);
-        ancAjouter.addActionListener(e -> {
-            if (txtTitre.getText().equals("") || txtprix.getText().equals("") || txtDescription.getText().equals("")|| fileName.equals("")) {
-                Dialog.show("Erreur!", "Veuillez remplir tous les champs: ", "OK", null);
-            } else {
-
-                String idcat = comboCategorie.getSelectedItem().toString().substring(0, comboCategorie.getSelectedItem().toString().indexOf("-"));
-                System.out.println("cate" + idcat);
-                ConnectionRequest conarticle = new ConnectionRequest();
-                conarticle.setUrl("http://localhost:8000/api/annonces/ajouter/" + id
-                        + "/" + txtprix.getText() + "/" + idcat + "/" + txtTitre.getText() + "/" + txtDescription.getText()+"/"+fileName);
-
-                NetworkManager.getInstance().addToQueue(conarticle);
-                conarticle.addResponseListener(new ActionListener<NetworkEvent>() {
-
-                    @Override
-                    public void actionPerformed(NetworkEvent evt) {
-                        String str = new String(conarticle.getResponseData());
-                        System.out.println(str);
-                        Dialog.show("Ajout", "Succès d'ajout.", "OK", null);
-                        
-                           if(str!=""){
-                             
-                             
-                             }
-                    }
-                });
-            }
-        });
-    }
-
-    private final ComboBox getListCategorie() {
-        ComboBox comboCategorie = new ComboBox();
-        Map<Double, String> catById = new HashMap<>();
-
-        ConnectionRequest con = new ConnectionRequest();
-
-        con.setUrl("http://localhost:8000/api/categorie/all");
-        NetworkManager.getInstance().addToQueue(con);
-        con.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-
-                CategorieService ser = new CategorieService();
-
-                List<Categories> Categories = ser.getListCategorie(new String(con.getResponseData()));
-
-//                for (Categories lst : list) {
-//
-//                    comboCategorie.addItem(lst.getDesignation());
-//                }
-                for (Categories categ : Categories) {
-                    catById.put(Double.parseDouble(String.valueOf(categ.getId())), categ.getDesignation());
-                }
-                for (Map.Entry<Double, String> cleval : catById.entrySet()) {
-                    String cle = cleval.getKey().toString().substring(0, cleval.getKey().toString().indexOf("."));
-                    comboCategorie.addItem(cle + "-" + cleval.getValue());
-                }
-            }
-        });
-
-        return comboCategorie;
     }
 
 }

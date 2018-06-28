@@ -13,6 +13,7 @@ import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.messaging.Message;
 import com.codename1.ui.Button;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Component;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
@@ -33,6 +34,7 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import java.text.ParseException;
@@ -53,7 +55,7 @@ import souk.util.SessionUser;
  */
 public class ReclamationsPage extends BaseForm{
     
-     Form f;
+     Form f, insert;
 
     public ReclamationsPage(Resources res)  {
        
@@ -62,6 +64,22 @@ public class ReclamationsPage extends BaseForm{
         super.addSideMenu(res);
         Container cntlbl = new Container();
         cntlbl.getAllStyles().setPadding(Component.TOP, 80);
+        
+        
+        // Insertion reclamation
+        
+        
+            
+           
+           
+        
+         
+        
+        // fin Insertion
+        Style s = UIManager.getInstance().getComponentStyle("TitleCommand");
+        FontImage icon = FontImage.createMaterial(FontImage.MATERIAL_ADD, s);
+        FontImage icon2 = FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK, s);
+        this.getToolbar().addCommandToRightBar("", icon, (e)->{ new ReclamationInsertPage(res).show();});
         add(cntlbl);
         int id = SessionUser.getInstance().getId();
         ConnectionRequest con = new ConnectionRequest();
@@ -268,6 +286,9 @@ public class ReclamationsPage extends BaseForm{
 
         
         add(cnt);
-            
+        
+         
+    
     }
+   
 }

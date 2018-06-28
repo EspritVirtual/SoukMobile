@@ -4,6 +4,16 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/ListeAnnonces.java</file>
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/ListeCommentairesAnc.java</file>
+            <file>file:/C:/Users/HAYFA/Documents/NetBeansProjects/SoukMobile/src/souk/gui/CrudAnnonce.java</file>
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> a4f27ac722578d3a64fb9611d21d78a541e77a47
             <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/entite/User.java</file>
             <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/services/EvenementsServices.java</file>
             <file>file:/C:/Users/salsa/OneDrive/Documents/GitHub/SoukMobile/src/souk/gui/ListeAnnonces.java</file>
@@ -42,9 +52,14 @@
 =======
             <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/services/CommandeService.java</file>
 >>>>>>> 7d6590e6c1233b8eb7b80018598b8e251c464965
+>>>>>>> 9395dc1ede96255692440fe11bfbce620d5a6b96
             <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/gui/ReclamationsPage.java</file>
-            <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/entite/Reclamations.java</file>
             <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/services/ReclamationsServices.java</file>
+<<<<<<< HEAD
+            <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/gui/BaseForm.java</file>
+            <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/gui/HomePage.java</file>
+            <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/gui/ReclamationInsertPage.java</file>
+=======
 <<<<<<< HEAD
             <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/entite/User.java</file>
             <file>file:/C:/Users/Soumaya/Documents/GitHub/SoukMobile/src/souk/services/UserServices.java</file>
@@ -59,6 +74,11 @@
 =======
 >>>>>>> 5ad8dd6f7045a561ba8407b3e35e7edda8128e0b
 >>>>>>> 8aaab745e7f59bf126e611ee84e5021b53f52e0f
+<<<<<<< HEAD
+>>>>>>> 08ad17f9d026397226dbd83e9a19c3f22b3bc5dd
+=======
+>>>>>>> a4f27ac722578d3a64fb9611d21d78a541e77a47
+>>>>>>> 9395dc1ede96255692440fe11bfbce620d5a6b96
         </group>
     </open-files>
 </project-private>

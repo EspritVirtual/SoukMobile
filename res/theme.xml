@@ -3,6 +3,7 @@
 <resource majorVersion="1" minorVersion="7" useXmlUI="false">
     <image name="abonnement.png"  />
     <image name="activation-background.jpg"  />
+    <image name="add_rec.png"  />
     <image name="Background-Mauve.jpg"  />
     <image name="bridge.jpg"  />
     <image name="commande.png"  />
