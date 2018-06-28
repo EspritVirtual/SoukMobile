@@ -64,18 +64,7 @@ public class ReclamationsPage extends BaseForm{
         super.addSideMenu(res);
         Container cntlbl = new Container();
         cntlbl.getAllStyles().setPadding(Component.TOP, 80);
-        
-        
-        // Insertion reclamation
-        
-        
-            
-           
-           
-        
-         
-        
-        // fin Insertion
+   
         Style s = UIManager.getInstance().getComponentStyle("TitleCommand");
         FontImage icon = FontImage.createMaterial(FontImage.MATERIAL_ADD, s);
         FontImage icon2 = FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK, s);
@@ -139,6 +128,7 @@ public class ReclamationsPage extends BaseForm{
         String dateStr = String.valueOf(date);
         System.out.println("date Page2 : "+date);
         tdate.setText(dateStr);
+        
         SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd yyyy");
         try{
             Date convertedCurrentDate = sdf.parse(String.valueOf(date));
