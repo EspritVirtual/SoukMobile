@@ -31,7 +31,6 @@ public class BaseForm extends Form {
         super(contentPaneLayout);
     }
 
-
     public BaseForm(String title, Layout contentPaneLayout, Resources res) {
         super(title, contentPaneLayout);
         //addSideMenu(res);
@@ -70,22 +69,22 @@ public class BaseForm extends Form {
         ));
 
         if (SessionUser.getInstance().getId() != 0) {
-            getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
+//            getToolbar().addMaterialCommandToSideMenu("Profil", FontImage.MATERIAL_ASSIGNMENT, e -> new ProfilForm(res).show());
 
             getToolbar().addMaterialCommandToSideMenu("Annonces", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeAnnonces(res).show());
             getToolbar().addMaterialCommandToSideMenu("Commandes", FontImage.MATERIAL_ASSIGNMENT, e -> new CommandesPage(res).show());
             getToolbar().addMaterialCommandToSideMenu("Réclamations", FontImage.MATERIAL_ASSIGNMENT, e -> new ReclamationsPage(res).show());
+            getToolbar().addMaterialCommandToSideMenu("Evénements", FontImage.MATERIAL_ASSIGNMENT, e -> new ListeEvenements(res).show());
 
             String rs = SessionUser.getInstance().getRoles();
 
             String CL = "ROLE_CLIENT";
             String roles = String.valueOf(rs);
-            if (roles.indexOf(CL)<=0) {
+            if (roles.indexOf(CL) <= 0) {
                 System.out.println("roles" + rs);
                 getToolbar().addMaterialCommandToSideMenu("Abonnements", FontImage.MATERIAL_ASSIGNMENT, e -> new AbonnementsPage(res).show());
 
             }
-
         } else {
 
             getToolbar().addMaterialCommandToSideMenu("Connexion", FontImage.MATERIAL_ASSIGNMENT, e -> new LoginForm(res).show());
